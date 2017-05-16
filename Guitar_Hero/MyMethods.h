@@ -11,6 +11,7 @@ class MyMethods{
 		static bool MouseIsInsideZoom(SDL_Surface* , SDL_Rect*, SDL_Event*, double, SDL_Surface*, SDL_Surface*);
 		static bool PushGem(FilaEncadeada<Gem*> *, Gem *, int);
 		static void RunGems(FilaEncadeada<Gem*> *, bool&, float);
+		static bool GemHit(FilaEncadeada<Gem*> *, int);
 };
 
 bool MyMethods::MouseIsInside(SDL_Surface *surface, SDL_Rect* destino, SDL_Event* lastevent)
@@ -69,13 +70,38 @@ bool MyMethods::PushGem(FilaEncadeada<Gem*> *F, Gem *G, int type){
 	else return true;
 }
 
+bool MyMethods::GemHit(FilaEncadeada<Gem*> *F, int color){
+	int tolerance = 200;
+	int hit_ypos = 448;
+	bool deucerto;
+
+	Node<Gem*> *aux = F->Topo;
+	while (aux != NULL && aux->info->color != color) //&& !(aux->info->Position->y >= hit_ypos + tolerance)
+		aux = aux->next;
+
+	
+	if (aux != NULL && (aux->info->Position.y + aux->info->spritesheet.h/2.0 >= hit_ypos - tolerance) && ((aux->info->Position.y + aux->info->spritesheet.h/2.0 >= hit_ypos + tolerance))){
+		printf("acertou");
+		F->SaiDaFila(aux->info, deucerto);
+		return true;
+	}
+	else
+		return false;
+}
+
 void MyMethods::RunGems(FilaEncadeada<Gem*> *F, bool& OK, float velocidade){
 	if(F->Topo != NULL){ //se não estiver vazia
 		Node<Gem*> *aux = F->Topo;
+		bool deucerto;
 		while(aux != NULL){ //percorrer fila até o final
-			aux->info->Position.x = aux->info->Position.x + (aux->info->vector.x) * velocidade; //incremento o vetor na posição
-			aux->info->Position.y = aux->info->Position.y + (aux->info->vector.y) * velocidade;
-			aux = aux->next; //próximo elemento da fila
+			if (aux->info->Position.y < 480){
+				aux->info->Position.x = aux->info->Position.x + (aux->info->vector.x) * velocidade; //incremento o vetor na posição
+				aux->info->Position.y = aux->info->Position.y + (aux->info->vector.y) * velocidade;
+				aux = aux->next; //próximo elemento da fila
+			}
+			else{
+				F->SaiDaFila(aux->info, deucerto);
+			}
 		}
 		OK=true;
 	}

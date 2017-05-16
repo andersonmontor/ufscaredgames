@@ -68,15 +68,40 @@ int main()
 	Node<Gem*> *nodeAux = NULL;
 	bool ok;
 	GameTrack.EntraNaFila(gAux, ok);
+
+	gAux = new Gem(2, 100);
+	GameTrack.EntraNaFila(gAux, ok);
+
+	gAux = new Gem(3, 200);
+	GameTrack.EntraNaFila(gAux, ok);
+
+	gAux = new Gem(4, 300);
+	GameTrack.EntraNaFila(gAux, ok);
+
+	gAux = new Gem(1, 400);
+	GameTrack.EntraNaFila(gAux, ok);
+
+	gAux = new Gem(2, 150);
+	GameTrack.EntraNaFila(gAux, ok);
+
+	gAux = new Gem(3, 250);
+	GameTrack.EntraNaFila(gAux, ok);
+
+	gAux = new Gem(4, 350);
+	GameTrack.EntraNaFila(gAux, ok);
+
+	gAux = new Gem(1, 450);
+	GameTrack.EntraNaFila(gAux, ok);
 	while(!nexttape)
 	{
-		while(!GameTrack.Vazia() && GameTrack.Topo->info->Time <= timecounter){
+		while(!GameTrack.Vazia() && GameTrack.Topo->info->Time <= timecounter)
+		{
 			GameTrack.SaiDaFila(gAux, ok);
 			if(!ok)printf("fodase\n");
 			GameField.EntraNaFila(gAux, ok);
 			if(!ok)printf("fodase2\n");
 		}
-		MyMethods::RunGems(&GameField, ok, 3);
+	MyMethods::RunGems(&GameField, ok, 3);
 
 		
 
@@ -87,24 +112,30 @@ int main()
 				switch (lastevent.key.keysym.sym){
 					case SDLK_a:
 						buttonstate[0] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
+						MyMethods::GemHit(&GameField, 0);
 						break;
 					case SDLK_s:
 						buttonstate[1] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
+						MyMethods::GemHit(&GameField, 1);
 						break;
 					case SDLK_j:
 						buttonstate[2] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
+						MyMethods::GemHit(&GameField, 2);
 						break;
 					case SDLK_k:
 						buttonstate[3] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
+						MyMethods::GemHit(&GameField, 3);
 						break;
 					case SDLK_l:
 						buttonstate[4] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
+						MyMethods::GemHit(&GameField, 4);
 						break;
 					default:
 						break;
 				}
 			}
 		}
+		timecounter++;
 		//preciso fazer um marcador de pontos
 		//presico fazer um label mostrando o nome da musica
 		//preciso fazer a animação da nota apertada
@@ -123,15 +154,15 @@ int main()
 			while (nodeAux != NULL){
 				destino.x = nodeAux->info->Position.x;
 				destino.y = nodeAux->info->Position.y;
-				printf("X:%d e Y:%d \n", destino.x, destino.y);
+				//printf("X:%d e Y:%d \n", destino.x, destino.y);
 				SDL_BlitSurface(nodeAux->info->image, &nodeAux->info->spritesheet, screen, &destino);
 				nodeAux = nodeAux->next;
 			}
 		}
-
 		SDL_UpdateRect(screen, 0,0,0,0);
+		if (GameTrack.Vazia() && GameField.Vazia())
+			return 0;
 	}
-	return 0;
 }
 
 
