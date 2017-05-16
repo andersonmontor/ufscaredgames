@@ -99,6 +99,7 @@ int FilaEncadeada<T>::getNumeroDeElementos()
     return NumeroDeElementos;
 }
 
+/*
 template <typename T>
 T* FilaEncadeada<T>::getTopo()
 {
@@ -110,7 +111,7 @@ T* FilaEncadeada<T>::getFim()
 {
     return Fim;
 }
-/*
+
 //vou testar essa merda
 int main()
 {

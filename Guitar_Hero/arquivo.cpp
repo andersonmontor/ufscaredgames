@@ -7,14 +7,14 @@ int main()
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_Init(IMG_INIT_PNG);
 	SDL_Surface *screen = SDL_SetVideoMode(640, 480, 16, SDL_SWSURFACE);
-	SDL_Surface *backgroung = SDL_LoadBMP("Data/Background.bmp");
+	SDL_Surface *background = SDL_LoadBMP("Data/Background.bmp");
 	SDL_Surface *startgameimage = IMG_Load("Data/neckchoosetext.png");
 	SDL_Rect destino;
 	bool nexttape = false;
 	SDL_Event lastevent;
 
 	SDL_FillRect(screen, NULL, 0x0);	
-	SDL_BlitSurface(backgroung, NULL, screen, NULL);
+	SDL_BlitSurface(background, NULL, screen, NULL);
 	destino.x = (screen->w/2) - startgameimage->w/2;
 	destino.y = (screen->h/2) - startgameimage->h/2 + 130;
 	SDL_BlitSurface(startgameimage, NULL, screen, &destino);
@@ -26,13 +26,14 @@ int main()
 		{
 			if(lastevent.type == SDL_QUIT) SDL_Quit();
 			if(lastevent.type == SDL_MOUSEMOTION){
-				nexttape = MyMethods::MouseIsInsideZoom(startgameimage, &destino, &lastevent, 1.3, screen, backgroung);
+				nexttape = MyMethods::MouseIsInsideZoom(startgameimage, &destino, &lastevent, 1.3, screen, background);
 			}
 		}
 	}
 	SDL_FreeSurface(startgameimage);
 
 //=================================================GAME============================================================================================
+	int timecounter = 0;
 	nexttape = false;
 	SDL_UpdateRect(screen, 0,0,0,0);
 	SDL_Surface *estera = IMG_Load("Made_Data/estera.png");
@@ -60,11 +61,27 @@ int main()
 		buttonstate[j] = 0; 
 	}
 
-	SDL_BlitSurface (estera, NULL, backgroung, NULL); // printando a esteira
+	SDL_BlitSurface (estera, NULL, background, NULL); // printando a esteira
+	FilaEncadeada<Gem*> GameTrack;
+	FilaEncadeada<Gem*> GameField;
+	Gem* gAux = new Gem(0, 0);
+	Node<Gem*> *nodeAux = NULL;
+	bool ok;
+	GameTrack.EntraNaFila(gAux, ok);
 	while(!nexttape)
 	{
+		while(!GameTrack.Vazia() && GameTrack.Topo->info->Time <= timecounter){
+			GameTrack.SaiDaFila(gAux, ok);
+			if(!ok)printf("fodase\n");
+			GameField.EntraNaFila(gAux, ok);
+			if(!ok)printf("fodase2\n");
+		}
+		MyMethods::RunGems(&GameField, ok, 3);
+
+		
+
 		while(SDL_PollEvent(&lastevent)){
-			if(lastevent.type == SDL_MOUSEMOTION)printf("X: %d, Y: %d\n", lastevent.motion.x, lastevent.motion.y);
+			if(lastevent.type == SDL_MOUSEMOTION)  // printf("X: %d, Y: %d\n", lastevent.motion.x, lastevent.motion.y);
 			if(lastevent.type == SDL_QUIT) SDL_Quit();
 			if(lastevent.type == SDL_KEYDOWN || lastevent.type == SDL_KEYUP){
 				switch (lastevent.key.keysym.sym){
@@ -90,13 +107,28 @@ int main()
 		}
 		//preciso fazer um marcador de pontos
 		//presico fazer um label mostrando o nome da musica
-		//preciso fazer a animação da nota
 		//preciso fazer a animação da nota apertada
 		//preciso saber como colocar musica
-		SDL_BlitSurface(backgroung, NULL, screen, NULL);
+
+		//desenha na tela
+		SDL_BlitSurface(background, NULL, screen, NULL);
+
+		
 		for(int j = 0; j<5; j++){
 			SDL_BlitSurface (buttons, &spritesheet[buttonstate[j]][j], screen, &buttonsposition[j]);
 		}
+
+		if(!GameField.Vazia()){
+			nodeAux = GameField.Topo;
+			while (nodeAux != NULL){
+				destino.x = nodeAux->info->Position.x;
+				destino.y = nodeAux->info->Position.y;
+				printf("X:%d e Y:%d \n", destino.x, destino.y);
+				SDL_BlitSurface(nodeAux->info->image, &nodeAux->info->spritesheet, screen, &destino);
+				nodeAux = nodeAux->next;
+			}
+		}
+
 		SDL_UpdateRect(screen, 0,0,0,0);
 	}
 	return 0;

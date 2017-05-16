@@ -9,16 +9,15 @@ class MyMethods{
 	public:
 		static bool MouseIsInside(SDL_Surface*, SDL_Rect*, SDL_Event*);
 		static bool MouseIsInsideZoom(SDL_Surface* , SDL_Rect*, SDL_Event*, double, SDL_Surface*, SDL_Surface*);
-		static bool PullGem(FilaEncadeada<Gem*> *, Gem *);
-		static void RunGems(FilaEncadeada<Gem*> *, bool&);
+		static bool PushGem(FilaEncadeada<Gem*> *, Gem *, int);
+		static void RunGems(FilaEncadeada<Gem*> *, bool&, float);
 };
 
 bool MyMethods::MouseIsInside(SDL_Surface *surface, SDL_Rect* destino, SDL_Event* lastevent)
 {
 
 	if(lastevent->type == SDL_MOUSEMOTION){
-		if(lastevent->motion.x >= destino->x && lastevent->motion.x <= destino->x + surface->w && lastevent->motion.y >= destino->y && lastevent->motion.y <= destino->y + surface->h)return true;
-		else return false;
+		return (lastevent->motion.x >= destino->x && lastevent->motion.x <= destino->x + surface->w && lastevent->motion.y >= destino->y && lastevent->motion.y <= destino->y + surface->h);
 		//printf("X: %d 	Y: %d\n", lastevent.motion.x, lastevent.motion.y);
 		//printf("foi\n");
 	}
@@ -59,7 +58,8 @@ bool MyMethods::MouseIsInsideZoom(SDL_Surface* surface, SDL_Rect* destino, SDL_E
 	}
 }
 
-bool MyMethods::PullGem(FilaEncadeada<Gem*> *F, Gem *G){
+bool MyMethods::PushGem(FilaEncadeada<Gem*> *F, Gem *G, int type){
+	
 	bool OK ;
 	F->EntraNaFila(G, OK);
 	if(OK == false){
@@ -69,11 +69,12 @@ bool MyMethods::PullGem(FilaEncadeada<Gem*> *F, Gem *G){
 	else return true;
 }
 
-void MyMethods::RunGems(FilaEncadeada<Gem*> *F, bool& OK){
-	if(F->getTopo() != NULL){ //se não estiver vazia
-		Node<Gem*> aux = F->getTopo();
-		while(aux->info != NULL){ //percorrer fila até o final
-			aux->info->Position = aux->info->Position + aux->info->direction; //incremento o vetor na posição
+void MyMethods::RunGems(FilaEncadeada<Gem*> *F, bool& OK, float velocidade){
+	if(F->Topo != NULL){ //se não estiver vazia
+		Node<Gem*> *aux = F->Topo;
+		while(aux != NULL){ //percorrer fila até o final
+			aux->info->Position.x = aux->info->Position.x + (aux->info->vector.x) * velocidade; //incremento o vetor na posição
+			aux->info->Position.y = aux->info->Position.y + (aux->info->vector.y) * velocidade;
 			aux = aux->next; //próximo elemento da fila
 		}
 		OK=true;

@@ -1,43 +1,30 @@
-#ifndef POINT
-#define POINT
-
-#include <math.h>
-#include "Vector.h"
-
-
 class Point{
 	public:
-		float X;
-		float Y;
+		float x;
+		float y;
 		Point();
 		Point(int, int);
 		Point(float, float);
-		Point operator+ (Vector);
-		Point operator- (Vector);
-		Vector operator- (Point);
+		Point operator+ (Point);
+		Point operator- (Point);
 };
 
 
 Point :: Point(){
-	X = 0;
-	Y = 0;
+	x = 0;
+	y = 0;
 }
-Point :: Point(int X, int Y){
-	this->X = (float)X;
-	this->Y = (float)Y;
+Point :: Point(int x, int y){
+	this->x = (float)x;
+	this->y = (float)y;
 }
 Point :: Point(float, float){
-	this->X = X;
-	this->Y = Y;
+	this->x = x;
+	this->y = y;
 }
-Point Point::operator+ (Vector V){
-	return Point(this->X + V.X, this->Y + V.Y);
+Point Point::operator+ (Point V){
+	return Point(this->x + V.x, this->y + V.y);
 }
-Point Point::operator- (Vector V){
-	return Point(this->X - V.X, this->Y - V.Y);
+Point Point::operator- (Point V){
+	return Point(this->x - V.x, this->y - V.y);
 }
-Vector Point::operator-(Point P){ // atenção: ao subtria P1 de P2 obtêm-se um vetor de P2 para P1 :3
-	return Vector(this->X - P.X, this->Y - V.Y);
-}
-
-#endif

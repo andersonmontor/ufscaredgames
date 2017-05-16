@@ -19,10 +19,9 @@ class FilaEncadeada
         void Print();//caso esses elemntos tenham sobrecarga no operador cout<< eu os imprimo na tela
 
         int getNumeroDeElementos(); // se algiuem quiser ver quantos elementos eu tenho
-        T* getTopo(); //se alguem quiser saber onde eu começo
-        T* getFim(); //se alguem quiser saber onde eu termino
+        //T* getTopo(); //se alguem quiser saber onde eu começo
+        //T* getFim(); //se alguem quiser saber onde eu termino
 
-    private:
         Node<T>* Topo; //pra eusaber de onde eu tiro alguém
         Node<T>* Fim; //pra eu saber onde eu coloco alguém
         int NumeroDeElementos; //pra eu saber quantos elementos eu tenho
