@@ -101,7 +101,7 @@ int main()
 			GameField.EntraNaFila(gAux, ok);
 			if(!ok)printf("fodase2\n");
 		}
-	MyMethods::RunGems(&GameField, ok, 3);
+	MyMethods::RunGems(&GameField, ok, 1);
 
 		
 

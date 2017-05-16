@@ -5,6 +5,11 @@
 #include "Gem.h"
 using namespace std;
 
+float modulo(float x){
+	if (x < 0) x = -x;
+	return x;
+}
+
 class MyMethods{
 	public:
 		static bool MouseIsInside(SDL_Surface*, SDL_Rect*, SDL_Event*);
@@ -71,17 +76,25 @@ bool MyMethods::PushGem(FilaEncadeada<Gem*> *F, Gem *G, int type){
 }
 
 bool MyMethods::GemHit(FilaEncadeada<Gem*> *F, int color){
-	int tolerance = 200;
+	int tolerance = 300;
 	int hit_ypos = 448;
 	bool deucerto;
+	Point centro_gem;
+
 
 	Node<Gem*> *aux = F->Topo;
 	while (aux != NULL && aux->info->color != color) //&& !(aux->info->Position->y >= hit_ypos + tolerance)
 		aux = aux->next;
 
-	
-	if (aux != NULL && (aux->info->Position.y + aux->info->spritesheet.h/2.0 >= hit_ypos - tolerance) && ((aux->info->Position.y + aux->info->spritesheet.h/2.0 >= hit_ypos + tolerance))){
-		printf("acertou");
+	printf("%d, x: %f, y: %f", aux->info->color, aux->info->Position.x, aux->info->Position.y);
+
+	if (aux != NULL){
+		centro_gem.x = aux->info->Position.x + 25.0;
+		centro_gem.y = aux->info->Position.y + 25.0;
+		//printf("%f\n", modulo(centro_gem.y - hit_ypos));
+	}
+	if (aux != NULL && (modulo(centro_gem.y - hit_ypos) <= tolerance)){
+		printf("acertou\n");
 		F->SaiDaFila(aux->info, deucerto);
 		return true;
 	}
