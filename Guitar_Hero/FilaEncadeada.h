@@ -12,6 +12,7 @@ class FilaEncadeada
 
         void EntraNaFila(T, bool&); //aqui eu coloco um elemento em mim
         void SaiDaFila(T&, bool&); //aqui eu tiro um elemento meu da fila
+        bool DeletaElemento(Node<T>*);
 
         bool Cheia(); //verifico se estou cheia, oque é dificil pois sou encadeada
         bool Vazia(); //verifico se tem algo em mim

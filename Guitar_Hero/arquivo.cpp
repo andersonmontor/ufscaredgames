@@ -39,6 +39,7 @@ int main()
 	SDL_Surface *estera = IMG_Load("Made_Data/estera.png");
 	SDL_Surface *buttons = IMG_Load("Data/data_downloaded/fretbuttons.png");
 	int buttonstate[5]; //usado para controlar os botões que sobem
+	int flames = -1;
 	buttons = zoomSurface(buttons, 0.5, 0.5, SMOOTHING_ON); //regulando tamanho
 	SDL_Rect spritesheet[3][5]; //[mode][color]
 	SDL_Rect buttonsposition[5];
@@ -101,10 +102,7 @@ int main()
 			GameField.EntraNaFila(gAux, ok);
 			if(!ok)printf("fodase2\n");
 		}
-	MyMethods::RunGems(&GameField, ok, 1);
-
-		
-
+		MyMethods::RunGems(&GameField, ok, 10);
 		while(SDL_PollEvent(&lastevent)){
 			if(lastevent.type == SDL_MOUSEMOTION)  // printf("X: %d, Y: %d\n", lastevent.motion.x, lastevent.motion.y);
 			if(lastevent.type == SDL_QUIT) SDL_Quit();
@@ -112,23 +110,23 @@ int main()
 				switch (lastevent.key.keysym.sym){
 					case SDLK_a:
 						buttonstate[0] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
-						MyMethods::GemHit(&GameField, 0);
+						if(buttonstate[0] == PRESSED_BUTTON)MyMethods::GemHit(&GameField, 0);
 						break;
 					case SDLK_s:
 						buttonstate[1] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
-						MyMethods::GemHit(&GameField, 1);
+						if(buttonstate[1] == PRESSED_BUTTON)MyMethods::GemHit(&GameField, 1);
 						break;
 					case SDLK_j:
 						buttonstate[2] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
-						MyMethods::GemHit(&GameField, 2);
+						if(buttonstate[2] == PRESSED_BUTTON)MyMethods::GemHit(&GameField, 2);
 						break;
 					case SDLK_k:
 						buttonstate[3] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
-						MyMethods::GemHit(&GameField, 3);
+						if(buttonstate[3] == PRESSED_BUTTON)MyMethods::GemHit(&GameField, 3);
 						break;
 					case SDLK_l:
 						buttonstate[4] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
-						MyMethods::GemHit(&GameField, 4);
+						if(buttonstate[4] == PRESSED_BUTTON)MyMethods::GemHit(&GameField, 4);
 						break;
 					default:
 						break;
@@ -160,8 +158,7 @@ int main()
 			}
 		}
 		SDL_UpdateRect(screen, 0,0,0,0);
-		if (GameTrack.Vazia() && GameField.Vazia())
-			return 0;
+		if (GameTrack.Vazia() && GameField.Vazia())return 0;
 	}
 }
 

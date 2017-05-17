@@ -99,6 +99,42 @@ int FilaEncadeada<T>::getNumeroDeElementos()
     return NumeroDeElementos;
 }
 
+template <typename T>
+bool FilaEncadeada<T>::DeletaElemento(Node<T>* Desig){
+    
+    if(Topo == NULL){
+        cout<<"Fila vazia, DeletaElemento não pode deletar\n";
+        return false;
+    }
+    Node<T>* aux = Topo;
+    while(aux != NULL && aux->next != Desig && aux !=Desig){
+        aux = aux->next;
+    }
+    if(aux == NULL){
+        cout<<"Não foi possivel achar o elemento designado a ser deletado\n";
+        return false;
+    }
+    if(aux == Desig){
+        cout<<"Warnning: é o primeiro elemento da fila";
+        Topo = Topo->next;
+        delete(aux);
+        aux = NULL;
+        NumeroDeElementos--;
+        return true;
+    }
+    if(aux->next == Desig){
+        Node<T>* deletador = aux->next;
+        aux->next = aux->next->next;
+        delete(deletador);
+        deletador = NULL;
+        NumeroDeElementos--;
+        return true;
+    }
+
+
+}
+
+
 /*
 template <typename T>
 T* FilaEncadeada<T>::getTopo()

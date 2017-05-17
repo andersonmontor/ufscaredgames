@@ -76,29 +76,34 @@ bool MyMethods::PushGem(FilaEncadeada<Gem*> *F, Gem *G, int type){
 }
 
 bool MyMethods::GemHit(FilaEncadeada<Gem*> *F, int color){
-	int tolerance = 300;
+	int tolerance = 50;
 	int hit_ypos = 448;
 	bool deucerto;
-	Point centro_gem;
 
+	cout<<"GemHit foi chamado\n";
+
+	if(F->Vazia()){
+		cout<<"Fila Vazia, não é possível executar gemHit\n";
+		return false;
+	}
 
 	Node<Gem*> *aux = F->Topo;
-	while (aux != NULL && aux->info->color != color) //&& !(aux->info->Position->y >= hit_ypos + tolerance)
+	 while (aux != NULL && aux->info->color != color){ //esta ultima condição não deixa pegar notas que ja foram perdidas
 		aux = aux->next;
-
-	printf("%d, x: %f, y: %f", aux->info->color, aux->info->Position.x, aux->info->Position.y);
-
-	if (aux != NULL){
-		centro_gem.x = aux->info->Position.x + 25.0;
-		centro_gem.y = aux->info->Position.y + 25.0;
-		//printf("%f\n", modulo(centro_gem.y - hit_ypos));
+	}//percorre a lista e acha a gem mais antiga da cor correspondente
+	if(aux == NULL){
+		cout<<"errou\n";
+		return false;
 	}
-	if (aux != NULL && (modulo(centro_gem.y - hit_ypos) <= tolerance)){
-		printf("acertou\n");
-		F->SaiDaFila(aux->info, deucerto);
-		return true;
-	}
+	if(aux->info->color == color){
+		if ((modulo(aux->info->centro.y - hit_ypos)) <= tolerance){ //confere se o centro da gem esta na área tolerada
+			cout<<"acertou\n";
+			F->DeletaElemento(aux);
+			return true;
+		}
+	}	
 	else
+		cout<<"errou\n";
 		return false;
 }
 
