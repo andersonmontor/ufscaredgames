@@ -1,7 +1,7 @@
 #include "MyMethods.h"
 #define PRESSED_BUTTON 2
 #define FREE_BUTTON 0
-#define GAME_SPEED 5
+#define GAME_SPEED 10
 
 int main()
 {
