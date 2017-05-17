@@ -76,7 +76,7 @@ bool MyMethods::PushGem(FilaEncadeada<Gem*> *F, Gem *G, int type){
 }
 
 bool MyMethods::GemHit(FilaEncadeada<Gem*> *F, int color){
-	int tolerance = 10;
+	int tolerance = 20;
 	int hit_ypos = 448;
 
 	cout<<"GemHit foi chamado\n";
