@@ -76,7 +76,7 @@ bool MyMethods::PushGem(FilaEncadeada<Gem*> *F, Gem *G, int type){
 }
 
 bool MyMethods::GemHit(FilaEncadeada<Gem*> *F, int color){
-	int tolerance = 20;
+	int tolerance = 40;
 	int hit_ypos = 448;
 
 	cout<<"GemHit foi chamado\n";
@@ -86,7 +86,7 @@ bool MyMethods::GemHit(FilaEncadeada<Gem*> *F, int color){
 		return false;
 	}
 	Node<Gem*> *aux = F->Topo;
-	 while (aux != NULL && aux->info->color != color && aux->info->centro.y >= hit_ypos+tolerance){ //esta ultima condição não deixa pegar notas que ja foram perdidas
+	 while (aux != NULL && (aux->info->color != color || aux->info->centro.y >= hit_ypos+tolerance)){ //esta ultima condição não deixa pegar notas que ja foram perdidas
 		aux = aux->next;
 	}//percorre a lista e acha a gem mais antiga da cor correspondente
 	if(aux == NULL){
@@ -98,7 +98,8 @@ bool MyMethods::GemHit(FilaEncadeada<Gem*> *F, int color){
 			cout<<"acertou\n";
 			F->DeletaElemento(aux);
 			return true;
-		}
+		}else
+			cout << "Errou!!!\n";
 	}	
 	else
 		cout<<"errou\n";
