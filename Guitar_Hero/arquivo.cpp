@@ -1,6 +1,7 @@
 #include "MyMethods.h"
 #define PRESSED_BUTTON 2
 #define FREE_BUTTON 0
+#define GAME_SPEED 1
 
 int main()
 {
@@ -102,7 +103,7 @@ int main()
 			GameField.EntraNaFila(gAux, ok);
 			if(!ok)printf("fodase2\n");
 		}
-		MyMethods::RunGems(&GameField, ok, 10);
+		MyMethods::RunGems(&GameField, ok, GAME_SPEED);
 		while(SDL_PollEvent(&lastevent)){
 			if(lastevent.type == SDL_MOUSEMOTION)  // printf("X: %d, Y: %d\n", lastevent.motion.x, lastevent.motion.y);
 			if(lastevent.type == SDL_QUIT) SDL_Quit();
@@ -133,7 +134,7 @@ int main()
 				}
 			}
 		}
-		timecounter++;
+		timecounter+=GAME_SPEED;
 		//preciso fazer um marcador de pontos
 		//presico fazer um label mostrando o nome da musica
 		//preciso fazer a animação da nota apertada

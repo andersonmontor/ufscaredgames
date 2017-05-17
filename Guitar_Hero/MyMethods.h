@@ -76,19 +76,17 @@ bool MyMethods::PushGem(FilaEncadeada<Gem*> *F, Gem *G, int type){
 }
 
 bool MyMethods::GemHit(FilaEncadeada<Gem*> *F, int color){
-	int tolerance = 50;
+	int tolerance = 10;
 	int hit_ypos = 448;
-	bool deucerto;
 
 	cout<<"GemHit foi chamado\n";
 
 	if(F->Vazia()){
-		cout<<"Fila Vazia, não é possível executar gemHit\n";
+		cout<<"errou\n";
 		return false;
 	}
-
 	Node<Gem*> *aux = F->Topo;
-	 while (aux != NULL && aux->info->color != color){ //esta ultima condição não deixa pegar notas que ja foram perdidas
+	 while (aux != NULL && aux->info->color != color && aux->info->centro.y >= hit_ypos+tolerance){ //esta ultima condição não deixa pegar notas que ja foram perdidas
 		aux = aux->next;
 	}//percorre a lista e acha a gem mais antiga da cor correspondente
 	if(aux == NULL){
@@ -96,7 +94,7 @@ bool MyMethods::GemHit(FilaEncadeada<Gem*> *F, int color){
 		return false;
 	}
 	if(aux->info->color == color){
-		if ((modulo(aux->info->centro.y - hit_ypos)) <= tolerance){ //confere se o centro da gem esta na área tolerada
+		if((modulo(aux->info->centro.y - hit_ypos)) <= tolerance){ //confere se o centro da gem esta na área tolerada
 			cout<<"acertou\n";
 			F->DeletaElemento(aux);
 			return true;
@@ -115,6 +113,8 @@ void MyMethods::RunGems(FilaEncadeada<Gem*> *F, bool& OK, float velocidade){
 			if (aux->info->Position.y < 480){
 				aux->info->Position.x = aux->info->Position.x + (aux->info->vector.x) * velocidade; //incremento o vetor na posição
 				aux->info->Position.y = aux->info->Position.y + (aux->info->vector.y) * velocidade;
+				aux->info->centro.x = aux->info->Position.x + aux->info->spritesheet.w/2; 
+				aux->info->centro.y = aux->info->Position.y + aux->info->spritesheet.h/2;
 				aux = aux->next; //próximo elemento da fila
 			}
 			else{
