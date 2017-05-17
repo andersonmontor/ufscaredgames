@@ -1,4 +1,5 @@
 #include "MyMethods.h"
+#include "Flames.cpp"
 #define PRESSED_BUTTON 2
 #define FREE_BUTTON 0
 #define GAME_SPEED 10
@@ -36,22 +37,20 @@ int main()
 //=================================================GAME============================================================================================
 	float timecounter = 0;
 	nexttape = false;
-	int flames_counter = 0;
+	int flames_counter[5] = {0,0,0,0,0};
 	SDL_UpdateRect(screen, 0,0,0,0);
 	SDL_Surface *estera = IMG_Load("resources/estera.png");
 	SDL_Surface *buttons = IMG_Load("resources/fretbuttons.png");
-	SDL_Surface *flames = IMG_Load("resources/animacao_chamas.png");
 	int buttonstate[5]; //usado para controlar os botões que sobem
-	int flames_selector = -1;
 	buttons = zoomSurface(buttons, 0.5, 0.5, SMOOTHING_ON); //regulando tamanho
 	SDL_Rect spritesheet_buttons[3][5]; //[mode][color]
 	SDL_Rect buttonsposition[5];
-	SDL_Rect flames_spritesheet;
-	SDL_Rect flames_destino;
-	flames_spritesheet.x = 0;
-	flames_spritesheet.y = 0;
-	flames_spritesheet.w = flames->w/13;
-	flames_spritesheet.h = flames->h;
+	Flames* flames[5];
+	flames[0] = new Flames(COLOR_GREEN);
+	flames[1] = new Flames(COLOR_RED);
+	flames[2] = new Flames(COLOR_YELLOW);
+	flames[3] = new Flames(COLOR_BLUE);
+	flames[4] = new Flames(COLOR_ORANGE);
 
 	FilaEncadeada<Gem*> Fila[5];
 	Gem* gemGenerator[5]; //cinco ponteiros que alocaam dinamicamente as gem's para que elas sejam colocadas na fila
@@ -123,16 +122,19 @@ int main()
 					case SDLK_a:
 						buttonstate[0] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[0] == PRESSED_BUTTON){
-							if(MyMethods::GemHit(&GameField, 0)){
-								flames_selector = 0;
+								ok = MyMethods::GemHit(&GameField, 0);
+							if(ok){
+								cout<<"cout\n";
+								//flames[0]->flamecounter;
+								flames[0]->Print(screen);
 							}
 						}
 						break;
 					case SDLK_s:
 						buttonstate[1] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[1] == PRESSED_BUTTON){
-							if(MyMethods::GemHit(&GameField, 1)){
-								flames_selector = 1;
+							if(!MyMethods::GemHit(&GameField, 1)){
+								flames[1]->flamecounter;
 							}
 						}
 						break;
@@ -140,7 +142,7 @@ int main()
 						buttonstate[2] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[2] == PRESSED_BUTTON){
 							if(MyMethods::GemHit(&GameField, 2)){
-								flames_selector = 2;
+								flames[2]->flamecounter;
 							}
 						}
 						break;
@@ -148,7 +150,7 @@ int main()
 						buttonstate[3] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[3] == PRESSED_BUTTON){
 							if(MyMethods::GemHit(&GameField, 3)){
-								flames_selector = 3;
+								flames[3]->flamecounter;
 							}
 						}
 						break;
@@ -156,7 +158,7 @@ int main()
 						buttonstate[4] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[4] == PRESSED_BUTTON){
 							if(MyMethods::GemHit(&GameField,4)){
-									flames_selector = 4;
+								flames[4]->flamecounter;
 							}
 						}
 						break;
@@ -193,20 +195,12 @@ int main()
 		}
 
 		//desenah as flames
-		if(flames_selector != -1){
-			if(flames_counter < 14){
-				flames_destino.x = buttonsposition[flames_selector].x;
-				flames_destino.y = buttonsposition[flames_selector].y;
-				flames_spritesheet.x += (flames_spritesheet.w * flames_counter);
-				SDL_BlitSurface(flames, &flames_spritesheet, screen, &buttonsposition[flames_selector]);
-				flames_counter++;
-			}
-			else flames_selector = -1;
+		for(int i = 0; i < 5; i++){
+			flames[i]->Print(screen);
 		}
 
 		SDL_UpdateRect(screen, 0,0,0,0);
 		if (GameTrack.Vazia() && GameField.Vazia()){
-			nexttape = 1;
 		}
 	}
 	
