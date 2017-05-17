@@ -21,7 +21,7 @@ class Gem{
 
 Gem :: Gem (int color, int Time){
 	this->color = color;
-	image = IMG_Load("Data/data_downloaded/notes.png");
+	image = IMG_Load("resources/notes.png");
 	image = zoomSurface(image, 0.38, 0.38, SMOOTHING_ON);
 	spritesheet.w = image->w/5;
 	spritesheet.h = image->h/5;

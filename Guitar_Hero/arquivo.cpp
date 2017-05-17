@@ -8,8 +8,8 @@ int main()
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_Init(IMG_INIT_PNG);
 	SDL_Surface *screen = SDL_SetVideoMode(640, 480, 16, SDL_SWSURFACE);
-	SDL_Surface *background = SDL_LoadBMP("Data/Background.bmp");
-	SDL_Surface *startgameimage = IMG_Load("Data/neckchoosetext.png");
+	SDL_Surface *background = SDL_LoadBMP("resources/Background.bmp");
+	SDL_Surface *startgameimage = IMG_Load("resources/neckchoosetext.png");
 	SDL_Rect destino;
 	bool nexttape = false;
 	SDL_Event lastevent;
@@ -38,9 +38,9 @@ int main()
 	nexttape = false;
 	int flames_counter = 0;
 	SDL_UpdateRect(screen, 0,0,0,0);
-	SDL_Surface *estera = IMG_Load("Made_Data/estera.png");
-	SDL_Surface *buttons = IMG_Load("Data/data_downloaded/fretbuttons.png");
-	SDL_Surface *flames = IMG_Load("Data/animacao_chamas.png");
+	SDL_Surface *estera = IMG_Load("resources/estera.png");
+	SDL_Surface *buttons = IMG_Load("resources/fretbuttons.png");
+	SDL_Surface *flames = IMG_Load("resources/animacao_chamas.png");
 	int buttonstate[5]; //usado para controlar os botões que sobem
 	int flames_selector = -1;
 	buttons = zoomSurface(buttons, 0.5, 0.5, SMOOTHING_ON); //regulando tamanho

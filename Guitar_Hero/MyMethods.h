@@ -108,6 +108,7 @@ bool MyMethods::GemHit(FilaEncadeada<Gem*> *F, int color){
 void MyMethods::RunGems(FilaEncadeada<Gem*> *F, bool& OK, float velocidade){
 	if(F->Topo != NULL){ //se não estiver vazia
 		Node<Gem*> *aux = F->Topo;
+		Node<Gem*> *aux2;
 		bool deucerto;
 		while(aux != NULL){ //percorrer fila até o final
 			if (aux->info->Position.y < 480){
@@ -118,8 +119,9 @@ void MyMethods::RunGems(FilaEncadeada<Gem*> *F, bool& OK, float velocidade){
 				aux = aux->next; //próximo elemento da fila
 			}
 			else{
+				aux2 = aux->next;
 				F->SaiDaFila(aux->info, deucerto);
-				aux = NULL;
+				aux = aux2;
 			}
 		}
 		OK=true;
