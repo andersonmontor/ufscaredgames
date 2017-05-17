@@ -1,7 +1,8 @@
 #include "MyMethods.h"
+#include "notes_loader.cpp"
 #define PRESSED_BUTTON 2
 #define FREE_BUTTON 0
-#define GAME_SPEED 10
+#define GAME_SPEED 1
 
 int main()
 {
@@ -75,34 +76,14 @@ int main()
 	SDL_BlitSurface (estera, NULL, background, NULL); // printando a esteira
 	FilaEncadeada<Gem*> GameTrack;
 	FilaEncadeada<Gem*> GameField;
-	Gem* gAux = new Gem(0, 0);
+	Gem* gAux;
 	Node<Gem*> *nodeAux = NULL;
 	bool ok;
-	GameTrack.EntraNaFila(gAux, ok);
 
-	gAux = new Gem(2, 100);
-	GameTrack.EntraNaFila(gAux, ok);
+	//Carrega as notas de um arquivo de texto notas.txt
+	if (!load_notes(&GameTrack))
+		cout << "Um erro ocorreu carregando as notas";
 
-	gAux = new Gem(3, 200);
-	GameTrack.EntraNaFila(gAux, ok);
-
-	gAux = new Gem(4, 300);
-	GameTrack.EntraNaFila(gAux, ok);
-
-	gAux = new Gem(1, 400);
-	GameTrack.EntraNaFila(gAux, ok);
-
-	gAux = new Gem(2, 150);
-	GameTrack.EntraNaFila(gAux, ok);
-
-	gAux = new Gem(3, 250);
-	GameTrack.EntraNaFila(gAux, ok);
-
-	gAux = new Gem(4, 350);
-	GameTrack.EntraNaFila(gAux, ok);
-
-	gAux = new Gem(1, 450);
-	GameTrack.EntraNaFila(gAux, ok);
 	while(!nexttape)
 	{
 		while(!GameTrack.Vazia() && GameTrack.Topo->info->Time <= timecounter)

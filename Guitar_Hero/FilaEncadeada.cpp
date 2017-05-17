@@ -1,3 +1,6 @@
+#ifndef FILA
+#define FILA
+
 #include <iostream>
 #include "FilaEncadeada.h"
 
@@ -171,3 +174,4 @@ int main()
 
     charsfila.Print(); //deu certo birl :3
 }*/
+#endif
