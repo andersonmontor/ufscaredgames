@@ -53,6 +53,7 @@ void FilaEncadeada<T>::SaiDaFila(T& destino, bool& ok)
     Topo = Topo->next; //meu topo agora é o lemento anteiror
     delete(aux); // destruí o elemento em questão com uma basuca pirocuda de protons fluorecentes
     NumeroDeElementos--;
+    aux == NULL;
     ok = true;
 }
 
@@ -72,11 +73,13 @@ bool FilaEncadeada<T>::Cheia()
     if(aux == nullptr)
     {
         delete(aux);
+        aux = NULL;
         return true;
     }
     else
     {
         delete(aux);
+        aux = NULL;
         return false;
     }
 }

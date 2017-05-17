@@ -119,6 +119,7 @@ void MyMethods::RunGems(FilaEncadeada<Gem*> *F, bool& OK, float velocidade){
 			}
 			else{
 				F->SaiDaFila(aux->info, deucerto);
+				aux = NULL;
 			}
 		}
 		OK=true;

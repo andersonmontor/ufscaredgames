@@ -36,7 +36,7 @@ int main()
 //=================================================GAME============================================================================================
 	float timecounter = 0;
 	nexttape = false;
-	int flames_counter = -1;
+	int flames_counter = 0;
 	SDL_UpdateRect(screen, 0,0,0,0);
 	SDL_Surface *estera = IMG_Load("Made_Data/estera.png");
 	SDL_Surface *buttons = IMG_Load("Data/data_downloaded/fretbuttons.png");
@@ -44,9 +44,15 @@ int main()
 	int buttonstate[5]; //usado para controlar os botões que sobem
 	int flames_selector = -1;
 	buttons = zoomSurface(buttons, 0.5, 0.5, SMOOTHING_ON); //regulando tamanho
-	SDL_Rect spritesheet[3][5]; //[mode][color]
+	SDL_Rect spritesheet_buttons[3][5]; //[mode][color]
 	SDL_Rect buttonsposition[5];
 	SDL_Rect flames_spritesheet;
+	SDL_Rect flames_destino;
+	flames_spritesheet.x = 0;
+	flames_spritesheet.y = 0;
+	flames_spritesheet.w = flames->w/13;
+	flames_spritesheet.h = flames->h;
+
 	FilaEncadeada<Gem*> Fila[5];
 	Gem* gemGenerator[5]; //cinco ponteiros que alocaam dinamicamente as gem's para que elas sejam colocadas na fila
 
@@ -54,14 +60,14 @@ int main()
 	for(int i = 0; i < 3; i++)
 	{
 		for(int j = 0; j<5; j++){//atribui os locais de corte da spritesheet dos botões
-			spritesheet[i][j].w = buttons->w/5;
-			spritesheet[i][j].h = buttons->h/3;
-			spritesheet[i][j].x = (spritesheet[i][j].w * j + 1);
-			spritesheet[i][j].y = (spritesheet[i][j].h * i + 1);
+			spritesheet_buttons[i][j].w = buttons->w/5;
+			spritesheet_buttons[i][j].h = buttons->h/3;
+			spritesheet_buttons[i][j].x = (spritesheet_buttons[i][j].w * j + 1);
+			spritesheet_buttons[i][j].y = (spritesheet_buttons[i][j].h * i + 1);
 		}
 	}
 	for(int j = 0; j<5; j++){//atribui a posição dos botões na tela e zera o vetor de estado deles
-		buttonsposition[j].x = (j == 0) ? 140 : 140 + j*(spritesheet[0][j].w + 10); //posição horizontal de cada botão espaçados com 10 pixels
+		buttonsposition[j].x = (j == 0) ? 140 : 140 + j*(spritesheet_buttons[0][j].w + 10); //posição horizontal de cada botão espaçados com 10 pixels
 		buttonsposition[j].y = 427; // posição vertical dos botôes
 		buttonstate[j] = 0; 
 	}
@@ -169,10 +175,12 @@ int main()
 		SDL_BlitSurface(background, NULL, screen, NULL);
 
 		
+		//desenha os botoes
 		for(int j = 0; j<5; j++){
-			SDL_BlitSurface (buttons, &spritesheet[buttonstate[j]][j], screen, &buttonsposition[j]);
+			SDL_BlitSurface (buttons, &spritesheet_buttons[buttonstate[j]][j], screen, &buttonsposition[j]);
 		}
 
+		//desenha as gems
 		if(!GameField.Vazia()){
 			nodeAux = GameField.Topo;
 			while (nodeAux != NULL){
@@ -183,12 +191,13 @@ int main()
 				nodeAux = nodeAux->next;
 			}
 		}
+
+		//desenah as flames
 		if(flames_selector != -1){
 			if(flames_counter < 14){
-				flames_spritesheet.x = 0;
-				flames_spritesheet.y = 0;
-				flames_spritesheet.w = (flames->w/13)*(flames_counter+1);
-				if(flames_counter == 0)flames_spritesheet.w = flames->h;
+				flames_destino.x = buttonsposition[flames_selector].x;
+				flames_destino.y = buttonsposition[flames_selector].y;
+				flames_spritesheet.x += (flames_spritesheet.w * flames_counter);
 				SDL_BlitSurface(flames, &flames_spritesheet, screen, &buttonsposition[flames_selector]);
 				flames_counter++;
 			}
