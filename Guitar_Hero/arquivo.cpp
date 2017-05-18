@@ -79,6 +79,7 @@ int main()
 	marcadorvermelho = zoomSurface(marcadorvermelho, 0.5, 0.5, SMOOTHING_ON);
 	SDL_Surface *multiplicador = IMG_Load("resources/mult.png");
 	multiplicador= zoomSurface(multiplicador, 0.5, 0.5, SMOOTHING_ON);
+	SDL_Surface* flames_image = IMG_Load("resources/animacao_chamas.png");
 	SDL_Rect mult_spritesheet;
 	mult_spritesheet.w = multiplicador->w;
 	mult_spritesheet.h = multiplicador->h/8;
@@ -91,11 +92,11 @@ int main()
 	SDL_Rect spritesheet_buttons[3][5]; //[mode][color]
 	SDL_Rect buttonsposition[5];
 	Flames* flames[5];
-	flames[0] = new Flames(COLOR_GREEN);
-	flames[1] = new Flames(COLOR_RED);
-	flames[2] = new Flames(COLOR_YELLOW);
-	flames[3] = new Flames(COLOR_BLUE);
-	flames[4] = new Flames(COLOR_ORANGE);
+	flames[0] = new Flames(COLOR_GREEN, flames_image);
+	flames[1] = new Flames(COLOR_RED, flames_image);
+	flames[2] = new Flames(COLOR_YELLOW, flames_image);
+	flames[3] = new Flames(COLOR_BLUE, flames_image);
+	flames[4] = new Flames(COLOR_ORANGE, flames_image);
 
 	FilaEncadeada<Gem*> Fila[5];
 	Gem* gemGenerator[5]; //cinco ponteiros que alocaam dinamicamente as gem's para que elas sejam colocadas na fila
