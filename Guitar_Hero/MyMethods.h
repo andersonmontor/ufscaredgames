@@ -19,7 +19,7 @@ class MyMethods{
 		static bool MouseIsInside(SDL_Surface*, SDL_Rect*, SDL_Event*);
 		static bool MouseIsInsideZoom(SDL_Surface* , SDL_Rect*, SDL_Event*, double, SDL_Surface*, SDL_Surface*);
 		static bool PushGem(FilaEncadeada<Gem*> *, Gem *, int);
-		static void RunGems(FilaEncadeada<Gem*> *, bool&, float);
+		static void RunGems(FilaEncadeada<Gem*> *, bool&, float, int& , int& , int&);
 		static bool GemHit(FilaEncadeada<Gem*> *, int);
 		static void acertou(int&, int&, int&, int&, Flames*);
 		static void errou(int&, int&, int&);
@@ -109,7 +109,7 @@ bool MyMethods::GemHit(FilaEncadeada<Gem*> *F, int color){
 		return false;
 }
 
-void MyMethods::RunGems(FilaEncadeada<Gem*> *F, bool& OK, float velocidade){
+void MyMethods::RunGems(FilaEncadeada<Gem*> *F, bool& OK, float velocidade, int& indicator, int& acertadas, int& Xnotes){
 	if(F->Topo != NULL){ //se não estiver vazia
 		Node<Gem*> *aux = F->Topo;
 		Node<Gem*> *aux2;
@@ -126,6 +126,8 @@ void MyMethods::RunGems(FilaEncadeada<Gem*> *F, bool& OK, float velocidade){
 				aux2 = aux->next;
 				F->SaiDaFila(aux->info, deucerto);
 				aux = aux2;
+				errou(indicator, acertadas, Xnotes);
+
 			}
 		}
 		OK=true;

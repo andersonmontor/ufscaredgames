@@ -144,7 +144,7 @@ int main()
 			GameField.EntraNaFila(gAux, ok);
 			if(!ok)printf("fodase2\n");
 		}
-		MyMethods::RunGems(&GameField, ok, game_speed);
+		MyMethods::RunGems(&GameField, ok, game_speed, indicator, acertadas, Xnotas);
 		acertou = true;
 		while(SDL_PollEvent(&lastevent)){
 			if(lastevent.type == SDL_MOUSEMOTION)  // printf("X: %d, Y: %d\n", lastevent.motion.x, lastevent.motion.y);
