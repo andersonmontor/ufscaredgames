@@ -12,7 +12,7 @@ int main()
 {
 	bool acertou;
 	Mix_Music *musica = NULL;
-	Mix_Chunk *som_errou = NULL;
+	Mix_Chunk *som_errou = NULL, *som_perdeu = NULL;
 
 
 	float game_speed = GAME_SPEED_FIXO;
@@ -29,12 +29,8 @@ int main()
 
 	Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096);
 	musica =  Mix_LoadMUS("resources/Sons/musica2.wav");
-	if (musica == NULL)
-		cout << "Houve um problema carregando a musica\n";
 	som_errou = Mix_LoadWAV("resources/Sons/errou.wav");
-	if (som_errou == NULL)
-		cout << "Houve um problema carregando o errou\n";
-
+	som_perdeu = Mix_LoadWAV("resources/Sons/failsound.wav");
 
 	SDL_FillRect(screen, NULL, 0x0);	
 	SDL_BlitSurface(background, NULL, screen, NULL);
@@ -145,14 +141,12 @@ int main()
 			if(!ok)printf("fodase2\n");
 		}
 		MyMethods::RunGems(&GameField, ok, game_speed, indicator, acertadas, Xnotas);
-		acertou = true;
 		while(SDL_PollEvent(&lastevent)){
 			if(lastevent.type == SDL_MOUSEMOTION)  // printf("X: %d, Y: %d\n", lastevent.motion.x, lastevent.motion.y);
 			if(lastevent.type == SDL_QUIT){
 				ganhou = true;
 				nexttape = true;
 			}
-			bool acertou;
 			if(lastevent.type == SDL_KEYDOWN || lastevent.type == SDL_KEYUP){
 				switch (lastevent.key.keysym.sym){
 					case SDLK_ESCAPE:
@@ -163,10 +157,10 @@ int main()
 						if(buttonstate[0] == PRESSED_BUTTON){
 							if(MyMethods::GemHit(&GameField, 0)){
 								MyMethods::acertou(score, acertadas, indicator, Xnotas, flames[0]);
-                acertou = true;
 							}
 							else{
 								MyMethods::errou(indicator, acertadas, Xnotas);
+								Mix_PlayChannel(-1, som_errou, 0);
 							}
 						}
 						break;
@@ -176,10 +170,10 @@ int main()
               
 							if(MyMethods::GemHit(&GameField, 1)){
 								MyMethods::acertou(score, acertadas, indicator, Xnotas, flames[1]);
-                acertou = true;
 							}
 							else{
 								MyMethods::errou(indicator, acertadas, Xnotas);
+								Mix_PlayChannel(-1, som_errou, 0);
 							}
 						}
 						break;
@@ -188,10 +182,10 @@ int main()
 						if(buttonstate[2] == PRESSED_BUTTON){
 							if(MyMethods::GemHit(&GameField, 2)){
 								MyMethods::acertou(score, acertadas, indicator, Xnotas, flames[2]);
-                acertou = true;
 							}
 							else{
 								MyMethods::errou(indicator, acertadas, Xnotas);
+								Mix_PlayChannel(-1, som_errou, 0);
 							}
 						}
 						break;
@@ -200,10 +194,10 @@ int main()
 						if(buttonstate[3] == PRESSED_BUTTON){
 							if(MyMethods::GemHit(&GameField, 3)){
 								MyMethods::acertou(score, acertadas, indicator, Xnotas, flames[3]);
-                acertou = true;
 							}
 							else{
 								MyMethods::errou(indicator, acertadas, Xnotas);
+								Mix_PlayChannel(-1, som_errou, 0);
 							}
 						}
 						break;
@@ -212,10 +206,10 @@ int main()
 						if(buttonstate[4] == PRESSED_BUTTON){
 							if(MyMethods::GemHit(&GameField,4)){
 								MyMethods::acertou(score, acertadas, indicator, Xnotas, flames[4]);
-                acertou = true;
 							}
 							else{
 								MyMethods::errou(indicator, acertadas, Xnotas);
+								Mix_PlayChannel(-1, som_errou, 0);
 							}
 						}
 						break;
@@ -225,8 +219,8 @@ int main()
 			}
 		}
 
-		if(!acertou)
-			Mix_PlayChannel(-1, som_errou, 0);
+
+			
 
 		timecounter+=game_speed;
 
@@ -296,6 +290,8 @@ int main()
 	}
 	else{
 		//mensagem de perdeu
+		Mix_HaltMusic();
+		Mix_PlayChannel(-1, som_perdeu, 0);
 		SDL_Surface* you_lose = IMG_Load("resources/youfailed.png");
 		background = SDL_LoadBMP("resources/Background.bmp");
 		SDL_BlitSurface(background, NULL, screen, NULL);
