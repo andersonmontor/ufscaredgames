@@ -57,27 +57,45 @@ int main()
 
 //=================================================GAME============================================================================================
 	float timecounter = 0;
+	int score = 0;
+	int indicator= 30;
+	int acertadas = 0;
+	int Xnotas = 0;
 	nexttape = false;
 	float framecount = 0, sum_fps = 0;
 	bool musica_play = false;
 	int flames_counter = 0;
 	SDL_UpdateRect(screen, 0,0,0,0);
 	SDL_Surface *estera = IMG_Load("resources/estera.png");
+	SDL_Surface *grademarcador = IMG_Load("resources/coop_rock_top.png");
+	grademarcador = zoomSurface(grademarcador, 0.5, 0.5, SMOOTHING_ON);
+	SDL_Surface *fundomarcador = IMG_Load("resources/coop_rockmeter.png");
+	fundomarcador = zoomSurface(fundomarcador, 0.5, 0.5, SMOOTHING_ON);
+	SDL_Surface *marcadorverde = IMG_Load("resources/coop_rock_hi.png");
+	marcadorverde = zoomSurface(marcadorverde, 0.5, 0.5, SMOOTHING_ON);
+	SDL_Surface *marcadoramarelo = IMG_Load("resources/coop_rock_med.png");
+	marcadoramarelo = zoomSurface(marcadoramarelo, 0.5, 0.5, SMOOTHING_ON);
+	SDL_Surface *marcadorvermelho = IMG_Load("resources/coop_rock_low.png");
+	marcadorvermelho = zoomSurface(marcadorvermelho, 0.5, 0.5, SMOOTHING_ON);
+	SDL_Surface *multiplicador = IMG_Load("resources/mult.png");
+	multiplicador= zoomSurface(multiplicador, 0.5, 0.5, SMOOTHING_ON);
+	SDL_Rect mult_spritesheet;
+	mult_spritesheet.w = multiplicador->w;
+	mult_spritesheet.h = multiplicador->h/8;
 	SDL_Surface *buttons = IMG_Load("resources/fretbuttons.png");
 	SDL_Surface *flames = IMG_Load("resources/animacao_chamas.png");
 	SDL_Surface *image = IMG_Load("resources/notes.png");
 	image = zoomSurface(image, 0.38, 0.38, SMOOTHING_ON);
 	int buttonstate[5]; //usado para controlar os botões que sobem
-	int flames_selector = -1;
 	buttons = zoomSurface(buttons, 0.5, 0.5, SMOOTHING_ON); //regulando tamanho
 	SDL_Rect spritesheet_buttons[3][5]; //[mode][color]
 	SDL_Rect buttonsposition[5];
-	SDL_Rect flames_spritesheet;
-	SDL_Rect flames_destino;
-	flames_spritesheet.x = 0;
-	flames_spritesheet.y = 0;
-	flames_spritesheet.w = flames->w/13;
-	flames_spritesheet.h = flames->h;
+	Flames* flames[5];
+	flames[0] = new Flames(COLOR_GREEN);
+	flames[1] = new Flames(COLOR_RED);
+	flames[2] = new Flames(COLOR_YELLOW);
+	flames[3] = new Flames(COLOR_BLUE);
+	flames[4] = new Flames(COLOR_ORANGE);
 
 	FilaEncadeada<Gem*> Fila[5];
 	Gem* gemGenerator[5]; //cinco ponteiros que alocaam dinamicamente as gem's para que elas sejam colocadas na fila
@@ -99,6 +117,10 @@ int main()
 	}
 
 	SDL_BlitSurface (estera, NULL, background, NULL); // printando a esteira
+	destino.x = INDICATOR_POSITIONX;
+	destino.y = INDICATOR_POSITIONY;
+	SDL_BlitSurface(fundomarcador, NULL, background, &destino);
+
 	FilaEncadeada<Gem*> GameTrack;
 	FilaEncadeada<Gem*> GameField;
 	Gem* gAux;
@@ -128,53 +150,70 @@ int main()
 			if(lastevent.type == SDL_QUIT){
 				nexttape = 1;
 			}
-			
+			bool acertou;
 			if(lastevent.type == SDL_KEYDOWN || lastevent.type == SDL_KEYUP){
 				switch (lastevent.key.keysym.sym){
 					case SDLK_ESCAPE:
 						nexttape = 1;
+						break;						
 					case SDLK_a:
 						buttonstate[0] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[0] == PRESSED_BUTTON){
-							acertou = MyMethods::GemHit(&GameField, 0);
-							if(acertou){
-								flames_selector = 0;
+							if(MyMethods::GemHit(&GameField, 0)){
+								MyMethods::acertou(score, acertadas, indicator, Xnotas, flames[0]);
+                acertou = true;
+							}
+							else{
+								MyMethods::errou(indicator, acertadas, Xnotas);
 							}
 						}
 						break;
 					case SDLK_s:
 						buttonstate[1] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[1] == PRESSED_BUTTON){
-							acertou = MyMethods::GemHit(&GameField, 1);
-							if(acertou){
-								flames_selector = 1;
+              
+							if(MyMethods::GemHit(&GameField, 0)){
+								MyMethods::acertou(score, acertadas, indicator, Xnotas, flames[1]);
+                acertou = true;
+							}
+							else{
+								MyMethods::errou(indicator, acertadas, Xnotas);
 							}
 						}
 						break;
 					case SDLK_j:
 						buttonstate[2] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[2] == PRESSED_BUTTON){
-							acertou = MyMethods::GemHit(&GameField, 2);
-							if(acertou){
-								flames_selector = 2;
+							if(MyMethods::GemHit(&GameField, 2)){
+								MyMethods::acertou(score, acertadas, indicator, Xnotas, flames[2]);
+                acertou = true;
+							}
+							else{
+								MyMethods::errou(indicator, acertadas, Xnotas);
 							}
 						}
 						break;
 					case SDLK_k:
 						buttonstate[3] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[3] == PRESSED_BUTTON){
-							acertou = MyMethods::GemHit(&GameField, 3);
-							if(acertou){
-								flames_selector = 3;
+							if(MyMethods::GemHit(&GameField, 3)){
+								MyMethods::acertou(score, acertadas, indicator, Xnotas, flames[3]);
+                acertou = true;
+							}
+							else{
+								MyMethods::errou(indicator, acertadas, Xnotas);
 							}
 						}
 						break;
 					case SDLK_l:
 						buttonstate[4] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[4] == PRESSED_BUTTON){
-							acertou = MyMethods::GemHit(&GameField, 4);
-							if(acertou){
-									flames_selector = 4;
+							if(MyMethods::GemHit(&GameField,4)){
+								MyMethods::acertou(score, acertadas, indicator, Xnotas, flames[4]);
+                acertou = true;
+							}
+							else{
+								MyMethods::errou(indicator, acertadas, Xnotas);
 							}
 						}
 						break;
@@ -183,19 +222,18 @@ int main()
 				}
 			}
 		}
+
 		if(!acertou)
 			Mix_PlayChannel(-1, som_errou, 0);
 
 		timecounter+=game_speed;
-		//preciso fazer um marcador de pontos
-		//presico fazer um label mostrando o nome da musica
-		//preciso fazer a animação da nota apertada
-		//preciso saber como colocar musica
 
 		//desenha na tela
 		SDL_BlitSurface(background, NULL, screen, NULL);
 
-		
+		//desenha o INDICATOR
+		MyMethods::DesenhaIndicador(indicator, Xnotas, marcadorvermelho, marcadoramarelo, marcadorverde, multiplicador, &mult_spritesheet, screen, grademarcador, &destino);
+
 		//desenha os botoes
 		for(int j = 0; j<5; j++){
 			SDL_BlitSurface (buttons, &spritesheet_buttons[buttonstate[j]][j], screen, &buttonsposition[j]);
@@ -212,22 +250,14 @@ int main()
 				nodeAux = nodeAux->next;
 			}
 		}
-
+		printf("indicator: %d\n",indicator);
 		//desenah as flames
-		if(flames_selector != -1){
-			if(flames_counter < 14){
-				flames_destino.x = buttonsposition[flames_selector].x;
-				flames_destino.y = buttonsposition[flames_selector].y;
-				flames_spritesheet.x += (flames_spritesheet.w * flames_counter);
-				SDL_BlitSurface(flames, &flames_spritesheet, screen, &buttonsposition[flames_selector]);
-				flames_counter++;
-			}
-			else flames_selector = -1;
+		for(int i = 0; i < 5; i++){
+			flames[i]->ParallelPrint(screen);
 		}
 
 		SDL_UpdateRect(screen, 0,0,0,0);
 		if (GameTrack.Vazia() && GameField.Vazia()){
-			nexttape = 1;
 		}
 		last_frametime = SDL_GetTicks();
 		total_frametime = (last_frametime - initial_frametime);
@@ -246,7 +276,6 @@ int main()
 
 
 	}
-	
 	SDL_Quit();
 	return 0;
 }
