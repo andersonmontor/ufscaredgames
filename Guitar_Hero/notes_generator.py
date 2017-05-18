@@ -3,6 +3,7 @@ import sys
 import termios
 import datetime
 
+intervalo = 240
 
 notas = []
 orig_settings = termios.tcgetattr(sys.stdin)
@@ -18,14 +19,16 @@ while x != chr(27): # ESC
         x = x.replace('j', '2')
         x = x.replace('k', '3')
         x = x.replace('l', '4')
-        time = int((datetime.datetime.now() - tempo_inicial).total_seconds()*100)
+        time = (datetime.datetime.now() - tempo_inicial).total_seconds()
         notas.append((x, time))
         print "%s:%s" % (x, time)
 
 
-f = open('notas.txt', 'w')
 
+
+
+
+f = open('notas_original2.txt', 'w')
 for nota in notas:
-    f.write("%s:%s\n" % (nota[0], nota[1]))
-
+    f.write("%s:%s\n" % (nota[0], int(nota[1]*intervalo)))
 f.close()

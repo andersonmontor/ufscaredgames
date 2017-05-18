@@ -1,9 +1,12 @@
 #include <fstream>
+#include <SDL/SDL_image.h>
 #include "FilaEncadeada.cpp"
 
 using namespace std;
 
-bool load_notes(FilaEncadeada<Gem*> *F){
+
+
+bool load_notes(FilaEncadeada<Gem*> *F, SDL_Surface *image){
 
 	ifstream file("notas.txt");
 	string str;
@@ -19,10 +22,10 @@ bool load_notes(FilaEncadeada<Gem*> *F){
 		//cout << color << ':' << time << '\n';
 		color_int = stoi(color);
 		time_int = stoi(time);
-		cout << "Carregando:" << color_int << ':' << time_int << '\n';
+		//cout << "Carregando:" << color_int << ':' << time_int << '\n';
 
-		gAux = new Gem(color_int, time_int);
-
+		gAux = new Gem(color_int, time_int, image);
+		//cout << sizeof(gAux) << '\n';
 		F->EntraNaFila(gAux, ok);
 		if (!ok)
 			return false;

@@ -6,6 +6,9 @@
 #define COLOR_BLUE 3
 #define COLOR_ORANGE 4
 
+
+
+
 class Gem{
 	public:
 		SDL_Surface *image;
@@ -15,14 +18,13 @@ class Gem{
 		Point Position;
 		Point centro;
 		SDL_Rect spritesheet;
-		Gem(int, int);
+		Gem(int, int, SDL_Surface*);
 		int Time;
 };
 
-Gem :: Gem (int color, int Time){
+Gem :: Gem (int color, int Time, SDL_Surface* image){
+	this->image = image;
 	this->color = color;
-	image = IMG_Load("resources/notes.png");
-	image = zoomSurface(image, 0.38, 0.38, SMOOTHING_ON);
 	spritesheet.w = image->w/5;
 	spritesheet.h = image->h/5;
 	spritesheet.x = spritesheet.w * color; //color assume {0,1,2,3,4,5} sempre

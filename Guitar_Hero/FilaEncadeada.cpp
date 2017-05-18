@@ -121,7 +121,7 @@ bool FilaEncadeada<T>::DeletaElemento(Node<T>* Desig){
         return false;
     }
     if(aux == Desig){
-        cout<<"Warnning: é o primeiro elemento da fila";
+        //cout<<"Warnning: é o primeiro elemento da fila";
         Topo = Topo->next;
         delete(aux);
         aux = NULL;

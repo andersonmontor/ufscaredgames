@@ -1,11 +1,23 @@
 #include "MyMethods.h"
 #include "notes_loader.cpp"
+#include <SDL/SDL_mixer.h>
+#include <math.h>
 #define PRESSED_BUTTON 2
 #define FREE_BUTTON 0
-#define GAME_SPEED 1
+#define FRAMERATE_IDEAL 60
+#define DELTA_TIME_DESEJADO 17 // (1/60 segundos) * 1000(milisegundos)
+#define GAME_SPEED_FIXO 4
 
 int main()
 {
+	bool acertou;
+	Mix_Music *musica = NULL;
+	Mix_Chunk *som_errou = NULL;
+
+
+	float game_speed = GAME_SPEED_FIXO;
+	float initial_frametime, last_frametime, total_frametime, FPS;
+
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_Init(IMG_INIT_PNG);
 	SDL_Surface *screen = SDL_SetVideoMode(640, 480, 16, SDL_SWSURFACE);
@@ -14,6 +26,15 @@ int main()
 	SDL_Rect destino;
 	bool nexttape = false;
 	SDL_Event lastevent;
+
+	Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096);
+	musica =  Mix_LoadMUS("resources/Sons/musica2.wav");
+	if (musica == NULL)
+		cout << "Houve um problema carregando a musica\n";
+	som_errou = Mix_LoadWAV("resources/Sons/errou.wav");
+	if (som_errou == NULL)
+		cout << "Houve um problema carregando o errou\n";
+
 
 	SDL_FillRect(screen, NULL, 0x0);	
 	SDL_BlitSurface(background, NULL, screen, NULL);
@@ -37,11 +58,15 @@ int main()
 //=================================================GAME============================================================================================
 	float timecounter = 0;
 	nexttape = false;
+	float framecount = 0, sum_fps = 0;
+	bool musica_play = false;
 	int flames_counter = 0;
 	SDL_UpdateRect(screen, 0,0,0,0);
 	SDL_Surface *estera = IMG_Load("resources/estera.png");
 	SDL_Surface *buttons = IMG_Load("resources/fretbuttons.png");
 	SDL_Surface *flames = IMG_Load("resources/animacao_chamas.png");
+	SDL_Surface *image = IMG_Load("resources/notes.png");
+	image = zoomSurface(image, 0.38, 0.38, SMOOTHING_ON);
 	int buttonstate[5]; //usado para controlar os botões que sobem
 	int flames_selector = -1;
 	buttons = zoomSurface(buttons, 0.5, 0.5, SMOOTHING_ON); //regulando tamanho
@@ -81,11 +106,14 @@ int main()
 	bool ok;
 
 	//Carrega as notas de um arquivo de texto notas.txt
-	if (!load_notes(&GameTrack))
+	cout << "Carregando notas...\n";
+	if (!load_notes(&GameTrack, image))
 		cout << "Um erro ocorreu carregando as notas";
 
+	
 	while(!nexttape)
 	{
+		initial_frametime = SDL_GetTicks();
 		while(!GameTrack.Vazia() && GameTrack.Topo->info->Time <= timecounter)
 		{
 			GameTrack.SaiDaFila(gAux, ok);
@@ -93,18 +121,23 @@ int main()
 			GameField.EntraNaFila(gAux, ok);
 			if(!ok)printf("fodase2\n");
 		}
-		MyMethods::RunGems(&GameField, ok, GAME_SPEED);
+		MyMethods::RunGems(&GameField, ok, game_speed);
+		acertou = true;
 		while(SDL_PollEvent(&lastevent)){
 			if(lastevent.type == SDL_MOUSEMOTION)  // printf("X: %d, Y: %d\n", lastevent.motion.x, lastevent.motion.y);
 			if(lastevent.type == SDL_QUIT){
 				nexttape = 1;
 			}
+			
 			if(lastevent.type == SDL_KEYDOWN || lastevent.type == SDL_KEYUP){
 				switch (lastevent.key.keysym.sym){
+					case SDLK_ESCAPE:
+						nexttape = 1;
 					case SDLK_a:
 						buttonstate[0] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[0] == PRESSED_BUTTON){
-							if(MyMethods::GemHit(&GameField, 0)){
+							acertou = MyMethods::GemHit(&GameField, 0);
+							if(acertou){
 								flames_selector = 0;
 							}
 						}
@@ -112,7 +145,8 @@ int main()
 					case SDLK_s:
 						buttonstate[1] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[1] == PRESSED_BUTTON){
-							if(MyMethods::GemHit(&GameField, 1)){
+							acertou = MyMethods::GemHit(&GameField, 1);
+							if(acertou){
 								flames_selector = 1;
 							}
 						}
@@ -120,7 +154,8 @@ int main()
 					case SDLK_j:
 						buttonstate[2] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[2] == PRESSED_BUTTON){
-							if(MyMethods::GemHit(&GameField, 2)){
+							acertou = MyMethods::GemHit(&GameField, 2);
+							if(acertou){
 								flames_selector = 2;
 							}
 						}
@@ -128,7 +163,8 @@ int main()
 					case SDLK_k:
 						buttonstate[3] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[3] == PRESSED_BUTTON){
-							if(MyMethods::GemHit(&GameField, 3)){
+							acertou = MyMethods::GemHit(&GameField, 3);
+							if(acertou){
 								flames_selector = 3;
 							}
 						}
@@ -136,7 +172,8 @@ int main()
 					case SDLK_l:
 						buttonstate[4] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[4] == PRESSED_BUTTON){
-							if(MyMethods::GemHit(&GameField,4)){
+							acertou = MyMethods::GemHit(&GameField, 4);
+							if(acertou){
 									flames_selector = 4;
 							}
 						}
@@ -146,7 +183,10 @@ int main()
 				}
 			}
 		}
-		timecounter+=GAME_SPEED;
+		if(!acertou)
+			Mix_PlayChannel(-1, som_errou, 0);
+
+		timecounter+=game_speed;
 		//preciso fazer um marcador de pontos
 		//presico fazer um label mostrando o nome da musica
 		//preciso fazer a animação da nota apertada
@@ -189,6 +229,22 @@ int main()
 		if (GameTrack.Vazia() && GameField.Vazia()){
 			nexttape = 1;
 		}
+		last_frametime = SDL_GetTicks();
+		total_frametime = (last_frametime - initial_frametime);
+		FPS = pow(total_frametime, -1)*1000;
+		game_speed = GAME_SPEED_FIXO * (FRAMERATE_IDEAL/FPS);
+		sum_fps += FPS;
+		framecount++;
+
+		if (!musica_play){
+			Mix_PlayMusic(musica, -1);
+			musica_play = true;
+		}
+		//cout << "FPS: " << FPS << " GAME_SPEED: " << game_speed << '\n';
+		//cout << "Average FPS: " << (sum_fps/framecount) << '\n';
+		cout << "Track: " << GameTrack.getNumeroDeElementos() << " Field: " << GameField.getNumeroDeElementos() << '\n';
+
+
 	}
 	
 	SDL_Quit();

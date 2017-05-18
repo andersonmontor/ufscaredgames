@@ -1,5 +1,6 @@
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_rotozoom.h>
+
 #include <stdio.h>
 #include "FilaEncadeada.cpp"
 #include "Gem.h"
@@ -79,10 +80,9 @@ bool MyMethods::GemHit(FilaEncadeada<Gem*> *F, int color){
 	int tolerance = 40;
 	int hit_ypos = 448;
 
-	cout<<"GemHit foi chamado\n";
+	//cout<<"GemHit foi chamado\n";
 
 	if(F->Vazia()){
-		cout<<"errou\n";
 		return false;
 	}
 	Node<Gem*> *aux = F->Topo;
@@ -90,19 +90,16 @@ bool MyMethods::GemHit(FilaEncadeada<Gem*> *F, int color){
 		aux = aux->next;
 	}//percorre a lista e acha a gem mais antiga da cor correspondente
 	if(aux == NULL){
-		cout<<"errou\n";
 		return false;
 	}
 	if(aux->info->color == color){
 		if((modulo(aux->info->centro.y - hit_ypos)) <= tolerance){ //confere se o centro da gem esta na área tolerada
-			cout<<"acertou\n";
 			F->DeletaElemento(aux);
 			return true;
 		}else
-			cout << "Errou!!!\n";
+			return false;
 	}	
 	else
-		cout<<"errou\n";
 		return false;
 }
 
