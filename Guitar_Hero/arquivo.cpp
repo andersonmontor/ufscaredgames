@@ -84,7 +84,6 @@ int main()
 	mult_spritesheet.w = multiplicador->w;
 	mult_spritesheet.h = multiplicador->h/8;
 	SDL_Surface *buttons = IMG_Load("resources/fretbuttons.png");
-	SDL_Surface *flames = IMG_Load("resources/animacao_chamas.png");
 	SDL_Surface *image = IMG_Load("resources/notes.png");
 	image = zoomSurface(image, 0.38, 0.38, SMOOTHING_ON);
 	int buttonstate[5]; //usado para controlar os botões que sobem

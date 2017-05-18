@@ -13,7 +13,7 @@ class Flames{
 		SDL_Rect destino;
 		int qual;
 		int flamecounter;
-		Flames(int);
+		Flames(int, SDL_Surface*);
 		void ParallelPrint(SDL_Surface*);
 		void Print(SDL_Surface*);
 };
