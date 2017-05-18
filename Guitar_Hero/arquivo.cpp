@@ -2,7 +2,7 @@
 #include "Flames.cpp"
 #define PRESSED_BUTTON 2
 #define FREE_BUTTON 0
-#define GAME_SPEED 10
+#define GAME_SPEED 3
 
 int main()
 {
@@ -119,22 +119,22 @@ int main()
 			}
 			if(lastevent.type == SDL_KEYDOWN || lastevent.type == SDL_KEYUP){
 				switch (lastevent.key.keysym.sym){
+					case SDLK_ESCAPE:
+						nexttape = 1;
+						break;						
 					case SDLK_a:
 						buttonstate[0] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[0] == PRESSED_BUTTON){
-								ok = MyMethods::GemHit(&GameField, 0);
-							if(ok){
-								cout<<"cout\n";
-								//flames[0]->flamecounter;
-								flames[0]->Print(screen);
+							if(MyMethods::GemHit(&GameField, 0)){
+								flames[0]->flamecounter = 0;
 							}
 						}
 						break;
 					case SDLK_s:
 						buttonstate[1] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[1] == PRESSED_BUTTON){
-							if(!MyMethods::GemHit(&GameField, 1)){
-								flames[1]->flamecounter;
+							if(MyMethods::GemHit(&GameField, 1)){
+								flames[1]->flamecounter = 0;
 							}
 						}
 						break;
@@ -142,7 +142,7 @@ int main()
 						buttonstate[2] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[2] == PRESSED_BUTTON){
 							if(MyMethods::GemHit(&GameField, 2)){
-								flames[2]->flamecounter;
+								flames[2]->flamecounter = 0;
 							}
 						}
 						break;
@@ -150,7 +150,7 @@ int main()
 						buttonstate[3] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[3] == PRESSED_BUTTON){
 							if(MyMethods::GemHit(&GameField, 3)){
-								flames[3]->flamecounter;
+								flames[3]->flamecounter = 0;
 							}
 						}
 						break;
@@ -158,7 +158,7 @@ int main()
 						buttonstate[4] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[4] == PRESSED_BUTTON){
 							if(MyMethods::GemHit(&GameField,4)){
-								flames[4]->flamecounter;
+								flames[4]->flamecounter = 0;
 							}
 						}
 						break;
@@ -196,7 +196,7 @@ int main()
 
 		//desenah as flames
 		for(int i = 0; i < 5; i++){
-			flames[i]->Print(screen);
+			flames[i]->ParallelPrint(screen);
 		}
 
 		SDL_UpdateRect(screen, 0,0,0,0);
