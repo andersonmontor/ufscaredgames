@@ -1,8 +1,8 @@
 #include "MyMethods.h"
-#include "Flames.cpp"
 #define PRESSED_BUTTON 2
 #define FREE_BUTTON 0
 #define GAME_SPEED 3
+
 
 int main()
 {
@@ -36,10 +36,28 @@ int main()
 
 //=================================================GAME============================================================================================
 	float timecounter = 0;
+	int score = 0;
+	int indicator= 30;
+	int acertadas = 0;
+	int Xnotas = 0;
 	nexttape = false;
-	int flames_counter[5] = {0,0,0,0,0};
 	SDL_UpdateRect(screen, 0,0,0,0);
 	SDL_Surface *estera = IMG_Load("resources/estera.png");
+	SDL_Surface *grademarcador = IMG_Load("resources/coop_rock_top.png");
+	grademarcador = zoomSurface(grademarcador, 0.5, 0.5, SMOOTHING_ON);
+	SDL_Surface *fundomarcador = IMG_Load("resources/coop_rockmeter.png");
+	fundomarcador = zoomSurface(fundomarcador, 0.5, 0.5, SMOOTHING_ON);
+	SDL_Surface *marcadorverde = IMG_Load("resources/coop_rock_hi.png");
+	marcadorverde = zoomSurface(marcadorverde, 0.5, 0.5, SMOOTHING_ON);
+	SDL_Surface *marcadoramarelo = IMG_Load("resources/coop_rock_med.png");
+	marcadoramarelo = zoomSurface(marcadoramarelo, 0.5, 0.5, SMOOTHING_ON);
+	SDL_Surface *marcadorvermelho = IMG_Load("resources/coop_rock_low.png");
+	marcadorvermelho = zoomSurface(marcadorvermelho, 0.5, 0.5, SMOOTHING_ON);
+	SDL_Surface *multiplicador = IMG_Load("resources/mult.png");
+	multiplicador= zoomSurface(multiplicador, 0.5, 0.5, SMOOTHING_ON);
+	SDL_Rect mult_spritesheet;
+	mult_spritesheet.w = multiplicador->w;
+	mult_spritesheet.h = multiplicador->h/8;
 	SDL_Surface *buttons = IMG_Load("resources/fretbuttons.png");
 	int buttonstate[5]; //usado para controlar os botões que sobem
 	buttons = zoomSurface(buttons, 0.5, 0.5, SMOOTHING_ON); //regulando tamanho
@@ -72,6 +90,10 @@ int main()
 	}
 
 	SDL_BlitSurface (estera, NULL, background, NULL); // printando a esteira
+	destino.x = INDICATOR_POSITIONX;
+	destino.y = INDICATOR_POSITIONY;
+	SDL_BlitSurface(fundomarcador, NULL, background, &destino);
+
 	FilaEncadeada<Gem*> GameTrack;
 	FilaEncadeada<Gem*> GameField;
 	Gem* gAux = new Gem(0, 0);
@@ -117,6 +139,8 @@ int main()
 			if(lastevent.type == SDL_QUIT){
 				nexttape = 1;
 			}
+
+			bool acertou;
 			if(lastevent.type == SDL_KEYDOWN || lastevent.type == SDL_KEYUP){
 				switch (lastevent.key.keysym.sym){
 					case SDLK_ESCAPE:
@@ -126,15 +150,21 @@ int main()
 						buttonstate[0] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[0] == PRESSED_BUTTON){
 							if(MyMethods::GemHit(&GameField, 0)){
-								flames[0]->flamecounter = 0;
+								MyMethods::acertou(score, acertadas, indicator, Xnotas, flames[0]);
+							}
+							else{
+								MyMethods::errou(indicator, acertadas, Xnotas);
 							}
 						}
 						break;
 					case SDLK_s:
 						buttonstate[1] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[1] == PRESSED_BUTTON){
-							if(MyMethods::GemHit(&GameField, 1)){
-								flames[1]->flamecounter = 0;
+							if(MyMethods::GemHit(&GameField, 0)){
+								MyMethods::acertou(score, acertadas, indicator, Xnotas, flames[1]);
+							}
+							else{
+								MyMethods::errou(indicator, acertadas, Xnotas);
 							}
 						}
 						break;
@@ -142,7 +172,10 @@ int main()
 						buttonstate[2] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[2] == PRESSED_BUTTON){
 							if(MyMethods::GemHit(&GameField, 2)){
-								flames[2]->flamecounter = 0;
+								MyMethods::acertou(score, acertadas, indicator, Xnotas, flames[2]);
+							}
+							else{
+								MyMethods::errou(indicator, acertadas, Xnotas);
 							}
 						}
 						break;
@@ -150,7 +183,10 @@ int main()
 						buttonstate[3] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[3] == PRESSED_BUTTON){
 							if(MyMethods::GemHit(&GameField, 3)){
-								flames[3]->flamecounter = 0;
+								MyMethods::acertou(score, acertadas, indicator, Xnotas, flames[3]);
+							}
+							else{
+								MyMethods::errou(indicator, acertadas, Xnotas);
 							}
 						}
 						break;
@@ -158,7 +194,10 @@ int main()
 						buttonstate[4] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[4] == PRESSED_BUTTON){
 							if(MyMethods::GemHit(&GameField,4)){
-								flames[4]->flamecounter = 0;
+								MyMethods::acertou(score, acertadas, indicator, Xnotas, flames[4]);
+							}
+							else{
+								MyMethods::errou(indicator, acertadas, Xnotas);
 							}
 						}
 						break;
@@ -168,15 +207,14 @@ int main()
 			}
 		}
 		timecounter+=GAME_SPEED;
-		//preciso fazer um marcador de pontos
-		//presico fazer um label mostrando o nome da musica
-		//preciso fazer a animação da nota apertada
-		//preciso saber como colocar musica
+
 
 		//desenha na tela
 		SDL_BlitSurface(background, NULL, screen, NULL);
 
-		
+		//desenha o INDICATOR
+		MyMethods::DesenhaIndicador(indicator, Xnotas, marcadorvermelho, marcadoramarelo, marcadorverde, multiplicador, &mult_spritesheet, screen, grademarcador, &destino);
+
 		//desenha os botoes
 		for(int j = 0; j<5; j++){
 			SDL_BlitSurface (buttons, &spritesheet_buttons[buttonstate[j]][j], screen, &buttonsposition[j]);
@@ -193,7 +231,7 @@ int main()
 				nodeAux = nodeAux->next;
 			}
 		}
-
+		printf("indicator: %d\n",indicator);
 		//desenah as flames
 		for(int i = 0; i < 5; i++){
 			flames[i]->ParallelPrint(screen);
@@ -203,7 +241,6 @@ int main()
 		if (GameTrack.Vazia() && GameField.Vazia()){
 		}
 	}
-	
 	SDL_Quit();
 	return 0;
 }

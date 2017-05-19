@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include "FilaEncadeada.cpp"
 #include "Gem.h"
+#include "Flames.cpp"
+#define INDICATOR_POSITIONX 500
+#define INDICATOR_POSITIONY 300
 using namespace std;
 
 float modulo(float x){
@@ -17,6 +20,9 @@ class MyMethods{
 		static bool PushGem(FilaEncadeada<Gem*> *, Gem *, int);
 		static void RunGems(FilaEncadeada<Gem*> *, bool&, float);
 		static bool GemHit(FilaEncadeada<Gem*> *, int);
+		static void acertou(int&, int&, int&, int&, Flames*);
+		static void errou(int&, int&, int&);
+		static void DesenhaIndicador(int, int, SDL_Surface*, SDL_Surface*, SDL_Surface*, SDL_Surface* ,SDL_Rect* ,SDL_Surface* ,SDL_Surface*, SDL_Rect*);
 };
 
 bool MyMethods::MouseIsInside(SDL_Surface *surface, SDL_Rect* destino, SDL_Event* lastevent)
@@ -127,4 +133,63 @@ void MyMethods::RunGems(FilaEncadeada<Gem*> *F, bool& OK, float velocidade){
 		OK=true;
 	}
 	else OK=false;
+}
+
+void MyMethods::acertou(int& score, int& acertadas, int& indicator, int& Xnotes, Flames* flame)
+{
+	if(indicator<60) indicator++;
+	acertadas++;
+	flame->flamecounter = 0;
+	if(acertadas < 30)Xnotes = 0;
+	else if(acertadas >= 30 && acertadas < 60)Xnotes = 2;
+	else if(acertadas >= 60 && acertadas < 90)Xnotes = 3;
+	else if(acertadas >= 90)Xnotes = 4;
+	score = (Xnotes != 0) ? score+Xnotes : score+1;
+}
+
+void MyMethods::errou(int& indicator, int& acertadas, int& Xnotes){
+	if(indicator>1){
+	indicator--;
+	acertadas = 0;
+	Xnotes = 0;
+	}
+}
+
+void MyMethods::DesenhaIndicador(	int indicator,
+									int Xnotes,
+									SDL_Surface* marcadorvermelho,
+									SDL_Surface* marcadoramarelo,
+									SDL_Surface* marcadorverde,
+									SDL_Surface* mult,
+									SDL_Rect *mult_spritesheet,
+									SDL_Surface* screen,
+									SDL_Surface* grademarcador,
+									SDL_Rect* destino){
+	destino->w = 0;
+	destino->h = 0;
+	if(indicator < 20){
+		destino->x = INDICATOR_POSITIONX;
+		destino->y = INDICATOR_POSITIONY+12;
+		SDL_BlitSurface(marcadorvermelho, NULL, screen, destino);
+		mult_spritesheet->x = mult_spritesheet->w * Xnotes;
+		SDL_BlitSurface(mult, mult_spritesheet, screen, destino);
+		SDL_BlitSurface(grademarcador, NULL, screen, destino);
+	}
+	if(indicator >= 20 && indicator < 40){
+		destino->x = INDICATOR_POSITIONX+32;
+		destino->y = INDICATOR_POSITIONY+12;
+		SDL_BlitSurface(marcadoramarelo, NULL, screen, destino);
+		mult_spritesheet->x = mult_spritesheet->w * Xnotes;
+		SDL_BlitSurface(mult, mult_spritesheet, screen, destino);
+		SDL_BlitSurface(grademarcador, NULL, screen, destino);
+	}
+	if(indicator >= 40){
+		destino->x = INDICATOR_POSITIONX+64;
+		destino->y = INDICATOR_POSITIONY+12;
+		SDL_BlitSurface(marcadorverde, NULL, screen, destino);
+		mult_spritesheet->x = mult_spritesheet->w * Xnotes;
+		SDL_BlitSurface(mult, mult_spritesheet, screen, destino);
+		SDL_BlitSurface(grademarcador, NULL, screen, destino);
+	}
+
 }
