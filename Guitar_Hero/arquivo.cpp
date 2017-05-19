@@ -172,7 +172,7 @@ int main()
 						buttonstate[1] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
 						if(buttonstate[1] == PRESSED_BUTTON){
               
-							if(MyMethods::GemHit(&GameField, 0)){
+							if(MyMethods::GemHit(&GameField, 1)){
 								MyMethods::acertou(score, acertadas, indicator, Xnotas, flames[1]);
                 acertou = true;
 							}
@@ -250,7 +250,7 @@ int main()
 				nodeAux = nodeAux->next;
 			}
 		}
-		printf("indicator: %d\n",indicator);
+		printf("indicator: %d\nacertadas: %d\nXnote: %d\ncore: %d\n\n\n",indicator, acertadas, Xnotas, score);
 		//desenah as flames
 		for(int i = 0; i < 5; i++){
 			flames[i]->ParallelPrint(screen);
@@ -272,7 +272,7 @@ int main()
 		}
 		//cout << "FPS: " << FPS << " GAME_SPEED: " << game_speed << '\n';
 		//cout << "Average FPS: " << (sum_fps/framecount) << '\n';
-		cout << "Track: " << GameTrack.getNumeroDeElementos() << " Field: " << GameField.getNumeroDeElementos() << '\n';
+		//cout << "Track: " << GameTrack.getNumeroDeElementos() << " Field: " << GameField.getNumeroDeElementos() << '\n';
 
 
 	}

@@ -169,34 +169,24 @@ void MyMethods::DesenhaIndicador(	int indicator,
 		destino->x = INDICATOR_POSITIONX;
 		destino->y = INDICATOR_POSITIONY+12;
 		SDL_BlitSurface(marcadorvermelho, NULL, screen, destino);
-		mult_spritesheet->x = mult_spritesheet->w * Xnotes;
-		SDL_BlitSurface(mult, mult_spritesheet, screen, destino);
-		destino->y -= 12;
-		SDL_BlitSurface(grademarcador, NULL, screen, destino);
 	}
 	if(indicator >= 20 && indicator < 40){
 		destino->x = INDICATOR_POSITIONX+32;
 		destino->y = INDICATOR_POSITIONY+12;
 		SDL_BlitSurface(marcadoramarelo, NULL, screen, destino);
-		SDL_UpdateRect(screen, 0, 0 , 0 ,0);
-		mult_spritesheet->x = mult_spritesheet->w * Xnotes;
-		mult_spritesheet->y = 0;
-		SDL_BlitSurface(mult, mult_spritesheet, screen, destino);
-		SDL_UpdateRect(screen, 0, 0 , 0 ,0);
-		destino->x -= 32;
-		destino->y -= 12;
-		SDL_BlitSurface(grademarcador, NULL, screen, destino);
-		SDL_UpdateRect(screen, 0, 0 , 0 ,0);
 	}
 	if(indicator >= 40){
 		destino->x = INDICATOR_POSITIONX+64;
 		destino->y = INDICATOR_POSITIONY+12;
 		SDL_BlitSurface(marcadorverde, NULL, screen, destino);
-		mult_spritesheet->x = mult_spritesheet->w * Xnotes;
-		SDL_BlitSurface(mult, mult_spritesheet, screen, destino);
-		destino->x -= 64;
-		destino->y -= 12;
-		SDL_BlitSurface(grademarcador, NULL, screen, destino);
 	}
+	mult_spritesheet->x = 0;
+	mult_spritesheet->y = mult_spritesheet->h * Xnotes;
+	destino->x = INDICATOR_POSITIONX + 28;
+	destino->y = INDICATOR_POSITIONY + 27;
+	SDL_BlitSurface(mult, mult_spritesheet, screen, destino);
+	destino->y = INDICATOR_POSITIONY;
+	destino->x = INDICATOR_POSITIONX;
+	SDL_BlitSurface(grademarcador, NULL, screen, destino);
 
 }
