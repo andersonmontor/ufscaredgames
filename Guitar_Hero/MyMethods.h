@@ -1,6 +1,6 @@
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_rotozoom.h>
-
+#include <SDL/SDL_ttf.h>
 #include <stdio.h>
 #include "FilaEncadeada.cpp"
 #include "Gem.h"
@@ -24,6 +24,7 @@ class MyMethods{
 		static void acertou(int&, int&, int&, int&, Flames*);
 		static void errou(int&, int&, int&);
 		static void DesenhaIndicador(int, int, SDL_Surface*, SDL_Surface*, SDL_Surface*, SDL_Surface* ,SDL_Rect* ,SDL_Surface* ,SDL_Surface*, SDL_Rect*);
+		static void drawText(SDL_Surface* , char* ,int, int, int,int, int, int,int, int, int);
 };
 
 bool MyMethods::MouseIsInside(SDL_Surface *surface, SDL_Rect* destino, SDL_Event* lastevent)
@@ -190,5 +191,33 @@ void MyMethods::DesenhaIndicador(	int indicator,
 	destino->y = INDICATOR_POSITIONY;
 	destino->x = INDICATOR_POSITIONX;
 	SDL_BlitSurface(grademarcador, NULL, screen, destino);
+
+}
+
+
+// Remember to call TTF_Quit() when done.
+
+void MyMethods::drawText(SDL_Surface* screen, char* string,int size, int x, int y,int fR, int fG, int fB,int bR, int bG, int bB){
+
+TTF_Font* font = TTF_OpenFont("resources/arial.ttf", size);
+
+SDL_Color foregroundColor;
+SDL_Color backgroundColor;
+foregroundColor.r = fR;
+foregroundColor.g = fG;
+foregroundColor.b = fB;
+backgroundColor.r = bR;
+backgroundColor.g = bG;
+backgroundColor.b = bB;
+
+SDL_Surface* textSurface = TTF_RenderText_Shaded(font, string, foregroundColor, backgroundColor);
+SDL_Rect textLocation;
+textLocation.x = x;
+textLocation.y = y; 
+textLocation.w = 0;
+textLocation.h = 0;
+SDL_BlitSurface(textSurface, NULL, screen, &textLocation);
+SDL_FreeSurface(textSurface);
+TTF_CloseFont(font);
 
 }

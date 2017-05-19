@@ -20,6 +20,7 @@ int main()
 
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_Init(IMG_INIT_PNG);
+	TTF_Init();
 	SDL_Surface *screen = SDL_SetVideoMode(640, 480, 16, SDL_SWSURFACE);
 	SDL_Surface *background = SDL_LoadBMP("resources/Background.bmp");
 	SDL_Surface *startgameimage = IMG_Load("resources/neckchoosetext.png");
@@ -57,6 +58,7 @@ int main()
 	int indicator= 30;
 	int acertadas = 0;
 	int Xnotas = 0;
+	char score_string[50];
 	bool ganhou;
 	nexttape = false;
 	float framecount = 0, sum_fps = 0;
@@ -144,7 +146,6 @@ int main()
 		while(SDL_PollEvent(&lastevent)){
 			if(lastevent.type == SDL_MOUSEMOTION)  // printf("X: %d, Y: %d\n", lastevent.motion.x, lastevent.motion.y);
 			if(lastevent.type == SDL_QUIT){
-				ganhou = true;
 				nexttape = true;
 			}
 			if(lastevent.type == SDL_KEYDOWN || lastevent.type == SDL_KEYUP){
@@ -246,7 +247,12 @@ int main()
 				nodeAux = nodeAux->next;
 			}
 		}
-		printf("indicator: %d\nacertadas: %d\nXnote: %d\ncore: %d\n\n\n",indicator, acertadas, Xnotas, score);
+
+		//desenha score
+		sprintf(score_string, "SCORE = %d", score);
+		char* pString = score_string;
+		MyMethods::drawText(screen, pString, 20, 500, 0,255,255,255,0,0,0);
+
 		//desenah as flames
 		for(int i = 0; i < 5; i++){
 			flames[i]->ParallelPrint(screen);
@@ -254,6 +260,7 @@ int main()
 
 		SDL_UpdateRect(screen, 0,0,0,0);
 		if (GameTrack.Vazia() && GameField.Vazia()){
+			ganhou = true;
 			nexttape = true;
 		}
 		last_frametime = SDL_GetTicks();
@@ -285,10 +292,16 @@ int main()
 		destino.x = (screen->w/2) - you_win->w/2;
 		destino.y = (screen->h/2) - you_win->h/2 + 130;
 		SDL_BlitSurface(you_win, NULL,background,&destino);
+		char string[50];
+		sprintf(string, "SCORE = %d", score);
+		char* pString = string;
+		MyMethods::drawText(screen, pString, 5, destino.x, destino.y-200, 255,255,255,0,0,0);
 		SDL_UpdateRect(screen, 0, 0, 0, 0);
 		SDL_Delay(5000);
+		
+
 	}
-	else{
+	else if(!ganhou){
 		//mensagem de perdeu
 		Mix_HaltMusic();
 		Mix_PlayChannel(-1, som_perdeu, 0);
@@ -298,10 +311,15 @@ int main()
 		destino.x = (screen->w/2) - you_lose->w/2;
 		destino.y = (screen->h/2) - you_lose->h/2 + 130;
 		SDL_BlitSurface(you_lose, NULL, screen,&destino);
+		char string[50];
+		sprintf(string, "SCORE = %d", score);
+		char* pString = string;
+		MyMethods::drawText(screen, pString, 50, destino.x, destino.y-200, 255,255,255,0,0,0);
 		SDL_UpdateRect(screen, 0, 0, 0, 0);
 		SDL_Delay(5000);
 	}
 
 	SDL_Quit();
+	TTF_Quit();
 	return 0;
 }
