@@ -61,6 +61,7 @@ int main()
 	int indicator= 30;
 	int acertadas = 0;
 	int Xnotas = 0;
+	bool ganhou;
 	nexttape = false;
 	float framecount = 0, sum_fps = 0;
 	bool musica_play = false;
@@ -148,7 +149,8 @@ int main()
 		while(SDL_PollEvent(&lastevent)){
 			if(lastevent.type == SDL_MOUSEMOTION)  // printf("X: %d, Y: %d\n", lastevent.motion.x, lastevent.motion.y);
 			if(lastevent.type == SDL_QUIT){
-				nexttape = 1;
+				ganhou = true;
+				nexttape = true;
 			}
 			bool acertou;
 			if(lastevent.type == SDL_KEYDOWN || lastevent.type == SDL_KEYUP){
@@ -258,6 +260,7 @@ int main()
 
 		SDL_UpdateRect(screen, 0,0,0,0);
 		if (GameTrack.Vazia() && GameField.Vazia()){
+			nexttape = true;
 		}
 		last_frametime = SDL_GetTicks();
 		total_frametime = (last_frametime - initial_frametime);
@@ -273,9 +276,36 @@ int main()
 		//cout << "FPS: " << FPS << " GAME_SPEED: " << game_speed << '\n';
 		//cout << "Average FPS: " << (sum_fps/framecount) << '\n';
 		//cout << "Track: " << GameTrack.getNumeroDeElementos() << " Field: " << GameField.getNumeroDeElementos() << '\n';
-
+		if(indicator == 0){
+			ganhou = false;
+			nexttape = true;
+		}
 
 	}
+
+	if(ganhou){
+		//mensagem de ganhou e mostra a pontuação
+		SDL_Surface* you_win = IMG_Load("resources/yourock.png");
+		background = SDL_LoadBMP("resources/Background.bmp");
+		SDL_BlitSurface(background, NULL, screen, NULL);
+		destino.x = (screen->w/2) - you_win->w/2;
+		destino.y = (screen->h/2) - you_win->h/2 + 130;
+		SDL_BlitSurface(you_win, NULL,background,&destino);
+		SDL_UpdateRect(screen, 0, 0, 0, 0);
+		SDL_Delay(5000);
+	}
+	else{
+		//mensagem de perdeu
+		SDL_Surface* you_lose = IMG_Load("resources/youfailed.png");
+		background = SDL_LoadBMP("resources/Background.bmp");
+		SDL_BlitSurface(background, NULL, screen, NULL);
+		destino.x = (screen->w/2) - you_lose->w/2;
+		destino.y = (screen->h/2) - you_lose->h/2 + 130;
+		SDL_BlitSurface(you_lose, NULL, screen,&destino);
+		SDL_UpdateRect(screen, 0, 0, 0, 0);
+		SDL_Delay(5000);
+	}
+
 	SDL_Quit();
 	return 0;
 }

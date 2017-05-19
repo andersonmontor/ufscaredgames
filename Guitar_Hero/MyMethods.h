@@ -139,14 +139,14 @@ void MyMethods::acertou(int& score, int& acertadas, int& indicator, int& Xnotes,
 	acertadas++;
 	flame->flamecounter = 0;
 	if(acertadas < 30)Xnotes = 0;
-	else if(acertadas >= 30 && acertadas < 60)Xnotes = 2;
-	else if(acertadas >= 60 && acertadas < 90)Xnotes = 3;
-	else if(acertadas >= 90)Xnotes = 4;
+	else if(acertadas >= 30 && acertadas < 60)Xnotes = 1;
+	else if(acertadas >= 60 && acertadas < 90)Xnotes = 2;
+	else if(acertadas >= 90)Xnotes = 3;
 	score = (Xnotes != 0) ? score+Xnotes : score+1;
 }
 
 void MyMethods::errou(int& indicator, int& acertadas, int& Xnotes){
-	if(indicator>1){
+	if(indicator>=1){
 	indicator--;
 	acertadas = 0;
 	Xnotes = 0;
