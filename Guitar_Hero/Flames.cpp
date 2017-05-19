@@ -18,8 +18,8 @@ class Flames{
 		void Print(SDL_Surface*);
 };
 
-Flames :: Flames(int tipo){
-	surface = IMG_Load("resources/animacao_chamas.png");
+Flames :: Flames(int tipo, SDL_Surface* surface){
+	this->surface = surface;
 	qual = tipo;
 	spritesheet.w = surface->w/13;
 	spritesheet.h = surface->h;
