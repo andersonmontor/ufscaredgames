@@ -12,7 +12,7 @@ int main()
 {
 	bool acertou;
 	Mix_Music *musica = NULL;
-	Mix_Chunk *som_errou = NULL, *som_perdeu = NULL;
+	Mix_Chunk *som_errou = NULL, *som_perdeu = NULL, *som_ganhou=NULL;
 
 
 	float game_speed = GAME_SPEED_FIXO;
@@ -32,6 +32,7 @@ int main()
 	musica =  Mix_LoadMUS("resources/Sons/musica2.wav");
 	som_errou = Mix_LoadWAV("resources/Sons/errou.wav");
 	som_perdeu = Mix_LoadWAV("resources/Sons/failsound.wav");
+	som_ganhou = Mix_LoadWAV("resources/Sons/ganhou.wav");
 
 	SDL_FillRect(screen, NULL, 0x0);	
 	SDL_BlitSurface(background, NULL, screen, NULL);
@@ -47,10 +48,13 @@ int main()
 			if(lastevent.type == SDL_QUIT) SDL_Quit();
 			if(lastevent.type == SDL_MOUSEMOTION){
 				nexttape = MyMethods::MouseIsInsideZoom(startgameimage, &destino, &lastevent, 1.3, screen, background);
+				char string[50] = "Use as teclas A S J K L";
+				char* pString = string;
+				MyMethods::drawText(screen, pString, 30, 100, 100, 255,255,255,0,0,0);
+				SDL_UpdateRect(screen, 0, 0, 0, 0);
 			}
 		}
 	}
-	SDL_FreeSurface(startgameimage);
 
 //=================================================GAME============================================================================================
 	float timecounter = 0;
@@ -97,8 +101,6 @@ int main()
 	flames[4] = new Flames(COLOR_ORANGE, flames_image);
 
 	FilaEncadeada<Gem*> Fila[5];
-	Gem* gemGenerator[5]; //cinco ponteiros que alocaam dinamicamente as gem's para que elas sejam colocadas na fila
-
 
 	for(int i = 0; i < 3; i++)
 	{
@@ -151,7 +153,7 @@ int main()
 			if(lastevent.type == SDL_KEYDOWN || lastevent.type == SDL_KEYUP){
 				switch (lastevent.key.keysym.sym){
 					case SDLK_ESCAPE:
-						nexttape = 1;
+						nexttape = true;
 						break;						
 					case SDLK_a:
 						buttonstate[0] = (lastevent.type == SDL_KEYDOWN) ? PRESSED_BUTTON : FREE_BUTTON;
@@ -285,19 +287,22 @@ int main()
 	}
 
 	if(ganhou){
-		//mensagem de ganhou e mostra a pontuação
-		SDL_Surface* you_win = IMG_Load("resources/yourock.png");
+		Mix_HaltMusic();
+		Mix_PlayChannel(-1, som_ganhou, 0);
+		SDL_Surface* you_win= IMG_Load("resources/yourock.png");
 		background = SDL_LoadBMP("resources/Background.bmp");
 		SDL_BlitSurface(background, NULL, screen, NULL);
 		destino.x = (screen->w/2) - you_win->w/2;
 		destino.y = (screen->h/2) - you_win->h/2 + 130;
-		SDL_BlitSurface(you_win, NULL,background,&destino);
+		SDL_BlitSurface(you_win, NULL, screen,&destino);
 		char string[50];
 		sprintf(string, "SCORE = %d", score);
 		char* pString = string;
-		MyMethods::drawText(screen, pString, 5, destino.x, destino.y-200, 255,255,255,0,0,0);
+		MyMethods::drawText(screen, pString, 50, destino.x, destino.y-200, 255,255,255,0,0,0);
 		SDL_UpdateRect(screen, 0, 0, 0, 0);
 		SDL_Delay(5000);
+		you_win = NULL;
+		pString = NULL;
 		
 
 	}
@@ -317,7 +322,34 @@ int main()
 		MyMethods::drawText(screen, pString, 50, destino.x, destino.y-200, 255,255,255,0,0,0);
 		SDL_UpdateRect(screen, 0, 0, 0, 0);
 		SDL_Delay(5000);
+		you_lose = NULL;
+		pString = NULL;
 	}
+
+	estera = NULL;
+	grademarcador = NULL;
+	fundomarcador = NULL;
+	marcadorverde = NULL;
+	marcadoramarelo = NULL;
+	marcadorvermelho = NULL;
+	multiplicador = NULL;
+	flames_image = NULL;
+	buttons = NULL;
+	image = NULL;
+	flames[0] = NULL;
+	flames[1] = NULL;
+	flames[2] = NULL;
+	flames[3] = NULL;
+	flames[4] = NULL;
+	musica = NULL;
+	som_errou = NULL;
+	som_perdeu = NULL;
+	som_ganhou = NULL;
+	screen = NULL;
+	background = NULL;
+	startgameimage = NULL;
+	gAux = NULL;
+	nodeAux = NULL;
 
 	SDL_Quit();
 	TTF_Quit();

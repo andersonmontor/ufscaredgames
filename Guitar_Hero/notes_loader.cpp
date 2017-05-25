@@ -27,6 +27,7 @@ bool load_notes(FilaEncadeada<Gem*> *F, SDL_Surface *image){
 		gAux = new Gem(color_int, time_int, image);
 		//cout << sizeof(gAux) << '\n';
 		F->EntraNaFila(gAux, ok);
+		gAux = NULL;
 		if (!ok)
 			return false;
 	}
